@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Players</h2>
+
+Table of all players registered, link to add player (if admin) and link to edit player
+
+<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
+	<thead>
+		<tr>
+			<th>Nick</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Phone</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for entry in entries %}
+	<tr>
+		<td>{{ entry['nick'] }}</td>
+		<td>{{ entry['name'] }}</td>
+		<td>{{ entry['email'] }}</td>
+		<td>{{ entry['phone'] }}</td>
+	</tr>
+	{% else %}
+	<tr><td>No entries.</td><td></td><td></td><td></td></tr>
+	{% endfor %}	
+	</body>
+</table>
+
+
+{% endblock %}

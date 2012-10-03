@@ -1,0 +1,155 @@
+.navroundtop
+{
+	display:block;
+	width:110px;
+}
+
+.navroundbottom
+{
+	display:block;
+	width:685px;
+	background-color:rgb(176,212,248);
+	
+}
+
+.navroundtop *,.navroundbottom *
+{
+	display:block;
+	height:1px;
+	overflow:hidden;
+	background-color:transparent;
+/*	background-color:rgb(190,255,154); */
+	background-color:rgb(213,232,251);
+}
+
+.navcurve1
+{
+	margin:0 5px;
+/*	background-color:rgb(105,205,105); */
+	background-color:rgb(213,232,251);
+
+}
+
+.navcurve2
+{
+	margin:0 3px;
+/*	background-color:rgb(105,205,105); */
+	background-color:rgb(213,232,251);
+}
+
+.navcurve3
+{
+	margin:0 2px;
+/*	background-color:rgb(105,205,105); */
+	background-color:rgb(213,232,251);
+}
+
+.navcurve4
+{
+	margin:0 1px;
+	height:2px;
+/*	background-color:rgb(105,205,105); */
+	background-color:rgb(213,232,251);
+}
+
+.navcurve1local
+{
+	margin:0 5px;
+/*	background-color:rgb(190,255,154); */
+	background-color:rgb(100,163,227);
+}
+
+.navcurve2local
+{
+	margin:0 3px;
+/*	background-color:rgb(190,255,154); */
+	background-color:rgb(100,163,227);
+}
+
+.navcurve3local
+{
+	margin:0 2px;
+/*	background-color:rgb(190,255,154); */
+	background-color:rgb(100,163,227);
+}
+
+.navcurve4local
+{
+	margin:0 1px;
+	height:2px;
+/*	background-color:rgb(190,255,154); */
+	background-color:rgb(100,163,227);
+}
+
+.navselect
+{
+	background-color:rgb(255,0,0);
+}
+
+.globalnavlink
+{
+	font-family:verdana,arial,sans-serif;
+	font-weight:bold;
+	color:rgb(0,48,0);
+	font-size:12px;
+}
+
+.globalnavlink:hover
+{
+	color:rgb(0,48,0);
+	text-decoration:none;
+}
+
+.tabstyle
+{
+	height:25px;
+	width:110px;
+	text-align:center;
+/*	background-color:rgb(105,205,105); */
+	background-color:rgb(213,232,251);
+}
+
+.localnav
+{
+/**	position:absolute; **/
+	position:relative;
+/*	background-color:rgb(190,255,154); */
+	background-color:rgb(100,163,227);
+	width:685px;
+	height:20px;
+/**	left:165px; **/
+	top:-80px;
+	
+}
+
+.localnavlink
+{
+	font-family:verdana,arial,sans-serif;
+	font-weight:normal;
+	vertical-align:bottom;
+	color:black;
+}
+
+.localnavlink:hover
+{
+	text-decoration:underline;
+	font-weight:normal;
+	vertical-align:bottom;
+	color:black;
+}
+
+.localnavlinkselected
+{
+	font-family:verdana,arial,sans-serif;
+	font-weight:bold;
+	vertical-align:bottom;
+	text-decoration:underline;
+	color:black;
+}
+.localnavlinkselected:hover
+{
+	text-decoration:underline;
+	font-weight:bold;
+	vertical-align:bottom;
+	color:black;
+}

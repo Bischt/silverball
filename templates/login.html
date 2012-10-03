@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+	<h2>Sign in or Create New Account</h2>
+	<form action="" method=post>
+		{% if error %}<p class=error><strong>Error: </strong> {{ error }}</p>{% endif %}
+		
+		<p>Please select an account to log in with.</p>
+		<img src="/static/images/openid/googleW.png" alt="Google" onclick="javascript:openidGoogle();" />
+		<img src="/static/images/openid/yahooW.png" alt="Yahoo!" onclick="javascript:openidYahoo();" />
+		
+		<input id=openidprovider type=text name=openid size=30>
+		<input type=submit value="Sign in">
+		<input type=hidden name=next value="{{ next }}">
+	</form>
+{% endblock %}

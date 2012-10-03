@@ -1,0 +1,36 @@
+/*******************************************************
+ * GENERIC ROUND CORNER STYLES
+ *******************************************************/
+.roundtop, .roundbottom
+{
+	display:block;
+	background-color:rgb(176,212,248);
+}
+
+.roundtop *, .roundbottom *
+{
+	display:block;
+	height:1px;
+	overflow:hidden;
+	background-color:rgb(213,232,251);
+}
+
+.curve1
+{
+	margin:0 5px;
+}
+
+.curve2
+{
+	margin:0 3px;
+}
+
+.curve3
+{
+	margin:0 2px;
+}
+
+.curve4
+{
+	margin:0 1px;
+}

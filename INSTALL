@@ -1,0 +1,139 @@
+Silverball Installation Instructions
+====================================
+
+This should help you get Silverball up and running on your own hosting environment.
+
+Silverball is a Python Flask application which runs in uWSGI and proxied by Nginx.
+The database powering Silverball is Postgres.  The directions are geared towards
+an Ubuntu install but they would only change slightly for RHEL or other distributions.
+
+0.  Install packages
+	~$ sudo apt-get install postgresql
+	~$ sudo apt-get install postgresql-server-dev-9.1
+	~$ sudo apt-get install python-setuptools
+	~$ sudo apt-get install python-virtualenv
+	~$ sudo apt-get install python-dev
+	~$ sudo apt-get install nginx
+	~$ sudo apt-get install uwsgi
+	~$ sudo apt-get install uwsgi-plugin-python
+	~$ sudo apt-get install uwsgi-plugin-http
+
+1.  Create and populate python environment
+	Generally I create a python virtural environment to run the app inside
+	~$ mkdir silverball
+	~$ cd silverball
+	~$ virtualenv venv
+	~$ . venv/bin/activate
+	
+	(venv)$ sudo pip install Flask
+	(venv)$ easy_install psycopg2
+	(venv)$ easy_install Flask-OpenID
+	(venv)$ easy_install sqlalchemy
+
+3.  Configure uWSGI
+
+	/etc/uwsgi/apps-enabled/config.ini
+
+	[uwsgi]
+	uid = uwsgi
+	gid = www-data
+	socket = /tmp/uwsgi.sock
+	chmod-socket = 666
+	chdir = /home/dwai/silverball-project/files/
+	pythonpath = /home/dwai/silverball-project/files
+	virtualenv = /home/dwai/silverball-project/venv
+	wsgi-file = /home/dwai/silverball-project/files/uwsgi.py
+	callable = app
+	daemonize = /var/log/uwsgi/app/silverball.log
+	plugins = http,python
+	buffer-size = 32768
+
+4.  Configure nginx
+
+	/etc/nginx/nginx.conf
+
+	user www-data;
+	worker_processes 4;
+	pid /var/run/nginx.pid;
+	
+	events {
+		worker_connections 768;
+		# multi_accept on;
+	}
+
+	http {
+
+		##
+		# Basic Settings
+		##
+
+		client_body_timeout  1460;
+		client_header_timeout 1460;
+		send_timeout 1460;
+		client_max_body_size 10m;
+
+		client_header_buffer_size 8m;
+		large_client_header_buffers 8 8m;
+		fastcgi_buffer_size 8m;
+		fastcgi_buffers 8 8m;
+		uwsgi_buffers 8 8m;
+		uwsgi_buffer_size 8m;
+
+		sendfile on;
+		tcp_nopush on;
+		tcp_nodelay on;
+		keepalive_timeout 1300;
+		types_hash_max_size 2048;
+		# server_tokens off;
+
+		# server_names_hash_bucket_size 64;
+		# server_name_in_redirect off;
+
+		include /etc/nginx/mime.types;
+		default_type application/octet-stream;
+
+		##
+		# Logging Settings
+		##
+
+		access_log /var/log/nginx/access.log;
+		error_log /var/log/nginx/error.log;
+
+		##
+		# Gzip Settings
+		##
+
+		gzip on;
+		gzip_disable "msie6";
+
+		include /etc/nginx/conf.d/*.conf;
+		include /etc/nginx/sites-enabled/*;
+	}
+
+	/etc/nginx/sites-enabled/default
+
+	server {
+		listen		80;
+		server_name	localhost;
+
+		location /static {
+			alias /home/dwai/silverball-project/files/static;
+		}
+
+		location / {
+			include uwsgi_params;
+			uwsgi_pass unix:/tmp/uwsgi.sock;
+			uwsgi_param UWSGI_PYHOME /home/dwai/silverball-project/venv;
+        		uwsgi_param UWSGI_CHDIR /home/dwai/silverball-project/files;
+        		uwsgi_param UWSGI_MODULE application;
+        		uwsgi_param UWSGI_CALLABLE app;
+		}
+
+		error_page	404		/404.html;
+
+		error_page 	500 502 503 504	/50x.html;
+
+		location = /50x.html {
+			root	/usr/share/nginx/html;
+		}
+	}

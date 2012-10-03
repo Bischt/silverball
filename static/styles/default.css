@@ -1,0 +1,261 @@
+/**********************************************
+ * PAGE STYLES
+ **********************************************/
+html
+{
+	height:100%;
+	margin-bottom:0.01em;
+}
+
+body
+{
+	background-color:rgb(176, 212, 248);
+	background-attachment:fixed;
+
+	color:rgb(0,0,0);
+	font-family:verdana,arial,sans-serif;
+	font-size:12px;
+	line-height:20px;
+
+	margin:0in 1in 0in .05in;
+}
+
+a
+{
+	font-family:verdana,arial,sans-serif;
+	color:rgb(6,88,141);
+	font-weight:bold;
+	line-height:normal;
+	font-variant:normal;
+	font-size:10px;
+	font-style:normal;
+	text-decoration:none;
+	cursor:pointer;
+}
+
+a:active
+{
+	color:#000000;
+	text-decoration:none;
+}
+
+a:hover
+{
+	color:#808080;
+	text-decoration:none;
+	cursor:hand;
+}
+
+h1, .heading1
+{
+	font-family:palatino,georgia,verdana,arial,sans-serif;
+	color:#333;
+	font-size:x-large;
+	font-weight:normal;
+	padding:15px;
+}
+
+h2, .heading2
+{
+	font-family:palatino,georgia,times new roman, serif;
+	font-size:18px;
+	color:#333;
+	border-color:#000000;
+	border-bottom:1px solid #999;
+	margin-bottom:10px;
+	font-weight:bold;
+}
+
+h3, .heading3
+{
+	font-family:palatino,georgia,times new roman, serif;
+	font-size:16px;
+	font-variant:small-caps;
+	color:#666;
+	letter-spacing:2px;
+}
+
+.bold
+{
+	font-family:verdana,arial,sans-serif;
+	color:rgb(65,59,100);
+	font-size:12px;
+	font-style:normal;
+	line-height:normal;
+	font-weight:bolder;
+	font-variant:normal;
+	text-decoration:none;
+}
+
+.italic
+{
+	font-family:verdana,arial,sans-serif;
+	color:rgb(65,59,100);
+	font-size:12px;
+	font-style:italic;
+	line-height:normal;
+	font-weight:normal;
+	font-variant:normal;
+	text-decoration:none;
+}
+
+.underline
+{
+	font-family:verdana,arial,sans-serif;
+	color:rgb(65,59,100);
+	font-size:12px;
+	font-style:normal;
+	line-height:normal;
+	font-weight:normal;
+	font-variant:normal;
+	text-decoration:underline;
+}
+
+.textblock
+{
+	font-family:verdana,georgia,palatino,arial,sans-serif;
+	color:#333;
+	font-size:x-small;
+	font-weight:normal;
+	background:rgb(255,255,255);
+	border-style:solid;
+	border-width:1px;
+	border-color:#000;
+	line-height:125%;
+	margin-left:25px;
+	margin-right:25px;
+}
+
+.code
+{
+
+}
+
+.footertext
+{
+	font-family:verdana,georgia,palatino,arial,sans-serif;
+	color:#000;
+	font-size:x-small;
+	font-weight:normal;
+	font-variant:normal;
+	border-top:thin solid #999;
+
+	text-align:center;
+}
+
+.alert
+{
+	color:rgb(255,0,0);
+}
+
+/**************************************************************
+ * FORM STYLES
+ **************************************************************/
+.textfield
+{
+	font-family:verdana,geneva,arial,sans-serif;
+	font-size:105%;
+	
+	background:white;
+	border:1px solid #59990E;
+	padding:4px 7px 0px 7px;
+	color:black;
+}
+
+.textfieldactive
+{
+	font-family:verdana,geneva,arial,sans-serif;
+	font-size:105%;
+
+	background:#CAF6FF;
+	border:1px solid #59990E;
+	padding:4px 7px 0px 7px;
+	color:black;
+}
+
+.buttonstyle
+{
+	font-family:verdana,geneva,arial,sans-serif;
+	font-size:105%;
+
+	background:white;
+	border:1px solid #59990E;
+	padding:4px 7px 0px 7px;
+	color:black;
+}
+
+.buttonstyleactive
+{
+	font-family:verdana,geneva,arial,sans-serif;
+	font-size:11px;
+	background:#CAF6FF;
+	border:1px solid #59990E;
+	color:black;
+}
+
+/*********************************************************
+ * POSITIONING
+ *********************************************************/
+.centeredimage
+{
+	text-align:center;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding:0px;
+}
+
+.mainlayer
+{
+	background-color:rgb(213,232,251);
+/**	position:absolute; **/
+	position:relative;
+/**	left:165px; **/
+/**	top:175px; **/
+	top:-65px;
+	width:685px;
+
+	z-index:2;
+	margin-bottom:30px;
+}
+
+.mainbuffer
+{
+	background-color:rgb(213,232,251);
+	margin-top:10px;
+	margin-bottom:10px;
+	margin-left:10px;
+	margin-right:10px;
+}
+
+/********************************************************
+ * Effects
+ ********************************************************/
+.overlaybackground
+{
+	display:none;
+	position:absolute;
+	top:0%;
+	left:0%;
+	width:100%;
+	height:100%;
+	background-color:black;
+	z-index:100;
+	-moz-opacity:0.8;
+	opacity:.80;
+	filter:alpha(opacity=80);
+}
+
+.overlaycontent
+{
+	display:none;
+	position:absolute;
+	top:25%;
+	left:25%;
+	width:50%;
+	height:50%;
+	padding:16px;
+	border:1px solid black;
+	background-color:white;
+	z-index:101;
+	overflow:auto;
+}
