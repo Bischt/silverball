@@ -5,8 +5,11 @@ create table player (
   name varchar(255),
   email varchar(255),
   phone varchar(25),
+  location varchar(255),
+  pinside varchar(30),
   notes text,
-  status integer
+  status integer,
+  active boolean not null
 );
 
 drop table if exists game;
@@ -28,9 +31,9 @@ create table location (
   active boolean
 );
 
-insert into player (nick, name, email, phone, notes, status) values ('rdare', 'Russell Dare', 'rdare3@gmail.com', '(301)345-2345', 'Awesome guy!', 1);
-insert into player (nick, name, email, phone, notes, status) values ('samsam', 'samsonite', 'sam@tortugas.com', '', 'Some T', 1);
-insert into player (nick, name, email, phone, notes, status) values ('sliceoflife', 'Dexter Morgan', 'dexter@aol.com', '(716)345-2345', 'Meh', 2);
+insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('rdare', 'Russell Dare', 'rdare3@gmail.com', '(301)345-2345', 'San Jose, CA', 'Bischt', 'Awesome guy!', 1, True);
+insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('samsam', 'samsonite', 'sam@tortugas.com', '', 'Fresno, CA', '', 'Some T', 1, True);
+insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('sliceoflife', 'Dexter Morgan', 'dexter@aol.com', '(716)345-2345', 'Sunnyvale, CA', '', 'Meh', 2, False);
 
 insert into location (lid, name, address, notes, active) values (1, 'Russells house', '123 any street', 'Awesome place for a beer', True);
 insert into location (lid, name, address, notes, active) values (2, 'Pizza Depot', 'Use Apple Maps heh', 'OK', True);

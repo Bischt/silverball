@@ -1,9 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<script type="text/javascript">
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+// Render Player: AJAX call to grab specific player info
+function rp(pid) {
+	$.getJSON($SCRIPT_ROOT + '/_single_player_profile', {
+	pid: pid
+	}, function(data) {
+        	$("#rendered_player_name").text(data.name);
+		$("#rendered_player_nick").text(data.nick);
+		$("#rendered_player_phone").text(data.phone);
+		$("#rendered_player_location").text(data.location);
+		$("#rendered_player_pinside").attr("href", 'http://pinside.com/pinball/community/pinsiders/'+data.pinside);
+		$("#rendered_player_notes").text(data.notes);
+      	});
+}
+</script>
+
 <h2>Players</h2>
 
-Table of all players registered, link to add player (if admin) and link to edit player
+<p>Table of all players registered, link to add player (if admin) and link to edit player.</p>
 
 <table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
 	<thead>
@@ -17,7 +35,7 @@ Table of all players registered, link to add player (if admin) and link to edit 
 	<tbody>
 	{% for entry in entries %}
 	<tr>
-		<td>{{ entry['nick'] }}</td>
+		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rp({{ entry['pid'] }});">{{ entry['nick'] }}</a></td>
 		<td>{{ entry['name'] }}</td>
 		<td>{{ entry['email'] }}</td>
 		<td>{{ entry['phone'] }}</td>
@@ -28,5 +46,17 @@ Table of all players registered, link to add player (if admin) and link to edit 
 	</body>
 </table>
 
+<!--Popup to show player details-->
+<div id="myModal" class="reveal-modal">
+        <h1><span id="rendered_player_name"></span> (<span id="rendered_player_nick"></span>)</h1>
+        <p>Any content could go in here.</p>
+        <div>
+        <b>Phone: </b><span id="rendered_player_phone"></span>
+        <b>Location: </b><span id="rendered_player_location"></span>
+        <b>Pinside: </b><a href="" id="rendered_player_pinside">Pinside</a>
+        <b>Notes: </b><span id="rendered_player_notes"></span>
+        </div>
+        <a class="close-reveal-modal">&#215;</a>
+</div>
 
 {% endblock %}

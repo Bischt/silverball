@@ -4,7 +4,7 @@
 # Imports
 import psycopg2
 import psycopg2.extras
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, jsonify, request, session, g, redirect, url_for, abort, render_template, flash
 from flaskext.openid import OpenID
 
 from sqlalchemy import create_engine, Column, Integer, String
@@ -71,21 +71,88 @@ def show_admin():
 def show_players():
   conn = connect_db()
   dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-  dbcur.execute("select pid, nick, name, email, phone, notes, status from player;")
+  dbcur.execute("select pid, nick, name, email, phone, location, pinside, notes, status from player where active=True;")
   entries = dbcur.fetchall()
   dbcur.close()
   conn.close()
   return render_template('show_players.html', title='Players', highlightActive='players', entries=entries)
 
+@app.route('/players/<username>')
+def show_player_by_name(username):
+	# Show the user profile for the specific name provided
+	conn = connect_db()
+	dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+	SQL = "select pid, nick, name, phone, location, pinside, notes, status, active from player where active=True and nick=%s;"
+	data = (username, )
+	dbcur.execute(SQL, data)
+	entries = dbcur.fetchall()
+	dbcur.close()
+	conn.close()
+	t = '%s Player Profile' % username
+	return render_template('show_specific_player.html', title=t, highlightActive='players', entries=entries)
+
+@app.route('/_single_player_profile')
+# Get all the details about a player from the database and return as JSON
+def single_player_profile():
+  pid = request.args.get('pid', 0, type=int)
+  conn = connect_db()
+  dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  SQL = "select pid, nick, name, phone, location, pinside, notes, status, active from player where active=True and pid=%s;"
+  data = (pid, )
+  dbcur.execute(SQL, data)
+  entries = dbcur.fetchall()
+  dbcur.close()
+  conn.close()
+
+  # Parse out results and compile into JSON
+  for entry in entries:
+    pid = entry['pid']
+    nick = entry['nick']
+    name = entry['name']
+    phone = entry['phone']
+    location = entry['location']
+    pinside = entry['pinside']
+    notes = entry['notes']
+    status = entry['status']
+    active = entry['active']
+
+  return jsonify(pid=pid, nick=nick, name=name, phone=phone, location=location, pinside=pinside, notes=notes, status=status, active=active)
+
+@app.route('/standings')
+def show_standings():
+  return render_template('show_standings.html', title='Standings', highlightActive='standings')
+
 @app.route('/locations')
 def show_locations():
   conn = connect_db()
   dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-  dbcur.execute("select lid, name, address, notes, active from location;")
+  dbcur.execute("select lid, name, address, notes, active from location where active=True;")
   entries = dbcur.fetchall()
   dbcur.close()
   conn.close()
   return render_template('show_locations.html', title='Locations', highlightActive='locations', entries=entries)
+
+@app.route('/_single_location_info')
+def single_location_info():
+  lid = request.args.get('lid', 0, type=int)
+  conn = connect_db()
+  dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  SQL = "select lid, name, address, notes, active from location where active=True and lid=%s;"
+  data = (lid,)
+  dbcur.execute(SQL, data)
+  entries = dbcur.fetchall()
+  dbcur.close()
+  conn.close()
+
+  # Parse out results and compile into JSON
+  for entry in entries:
+    lid = entry['lid']
+    name = entry['name']
+    address = entry['address']
+    notes = entry['notes']
+    active = entry['active']
+
+    return jsonify(lid=lid, name=name, address=address, notes=notes, active=active)
 
 ##########################################
 # OPENID CONFIGURATION

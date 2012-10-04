@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>Profile</h2>
+
+	{% for entry in entries %}
+	
+	<p>{{ entry['nick'] }}</p>
+	<p>{{ entry['name'] }}</p>
+	<p>{{ entry['email'] }}</p>
+	<p>{{ entry['phone'] }}</p>
+	
+	{% else %}
+	No active player found!
+	{% endfor %}	
+</body>
+{% endblock %}

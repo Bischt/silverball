@@ -1,6 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<script type="text/javascript">
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+// Render Location: AJAX call to grab specific location info
+function rl(lid) {
+	$.getJSON($SCRIPT_ROOT + '/_single_location_info', {
+	lid: lid
+	}, function(data) {
+		$("#rendered_location_name").text(data.name);
+		$("#rendered_location_address").text(data.address);
+		$("#rendered_location_notes").text(data.notes);
+	});
+}
+</script>
+
 <h2>Locations</h2>
 
 List of places to play
@@ -10,14 +25,58 @@ List of places to play
 		<tr>
 			<th>Name</th>
 			<th>Address</th>
+			<th>Games</th>
 		</tr>
 	</thead>
 	<tbody>
 	{% for entry in entries %}
-		<tr><td>{{ entry['name'] }}</td><td>{{ entry['address'] }}</td></tr>
+	<tr>
+		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
+		<td>{{ entry['address'] }}</td>
+		<td></td>
+	</tr>
 	{% else %}
 		<tr><td>No entries.</td><td></td></tr>
 	{% endfor %}
 	</tbody>
 </table>
+
+<!--Popup to show player details-->
+<div id="myModal" class="reveal-modal">
+	<h1><span id="rendered_location_name"></span></h1>
+	
+	<div>
+	<p><b>Address: </b><span id="rendered_location_address"></span></p>
+	<p><b>Notes: </b><span id="rendered_location_notes"></span></p>
+	<h3>Games on Location</h3>
+	<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Condition</th>
+			<th>Notes</th>
+			<th>Available for League</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>Theater of Magic</td>
+			<td>Glorious Condition</td>
+			<td>Playfield recently shined</td>
+			<td>Yes</td>
+		</tr>
+		<tr>    
+                        <td>Tales of the Arabian Nights</td>
+                        <td>Sad Sad Day</td>
+                        <td>Random resets</td>
+                        <td>No</td>
+                </tr>
+	
+		</tbody>
+	</table>
+	</div>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
+
+
 {% endblock %}
