@@ -31,9 +31,55 @@ create table location (
   active boolean
 );
 
+---------------------------------------------------------
+-- Test tables for league scoring/team matching/voting --
+---------------------------------------------------------
+drop table if exists sessions;
+create table sessions (
+  season_id integer primary key not null,
+  session_id integer not null,
+  lid integer
+  
+);
+
+drop table if exists scores;
+create table scores (
+  score_id SERIAL primary key not null,
+  session_id integer,
+  pid integer,
+  gid integer,
+  score bigint
+);
+
+drop table if exists teams;
+create table teams (
+  t_id integer,
+  pid integer
+);
+
+drop table if exists voting;
+create table voting ( 
+  gid integer,
+  pid integer,
+  vote boolean
+);
+
+-- Tables to hold historic data (lazy sharding)
+--drop table if exists history;
+--crate table history (
+
+--);
+
+--drop table if exists historic_scores;
+--create table historic_scores (
+
+--);
+---------------------------------------------------------
+---------------------------------------------------------
+
 insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('rdare', 'Russell Dare', 'rdare3@gmail.com', '(301)345-2345', 'San Jose, CA', 'Bischt', 'Awesome guy!', 1, True);
 insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('samsam', 'samsonite', 'sam@tortugas.com', '', 'Fresno, CA', '', 'Some T', 1, True);
-insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('sliceoflife', 'Dexter Morgan', 'dexter@aol.com', '(716)345-2345', 'Sunnyvale, CA', '', 'Meh', 2, False);
+insert into player (nick, name, email, phone, location, pinside, notes, status, active) values ('sliceoflife', 'Dexter Morgan', 'dexter@aol.com', '(716)345-2345', 'Sunnyvale, CA', '', 'Meh', 0, False);
 
 insert into location (lid, name, address, notes, active) values (1, 'Russells house', '123 any street', 'Awesome place for a beer', True);
 insert into location (lid, name, address, notes, active) values (2, 'Pizza Depot', 'Use Apple Maps heh', 'OK', True);

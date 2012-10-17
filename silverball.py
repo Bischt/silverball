@@ -65,7 +65,75 @@ def show_home():
 
 @app.route('/admin')
 def show_admin():
-  return render_template('show_admin.html', title="Admin")
+  conn = connect_db()
+  dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  dbcur.execute("select pid, nick, name, email, notes, status, active from player order by active")
+  entries = dbcur.fetchall()
+  dbcur.execute("select lid, name, address, active, notes from location order by active")
+  locations = dbcur.fetchall()
+  dbcur.close()
+  conn.close()
+  return render_template('show_admin.html', title="Admin", entries=entries, locations=locations)
+
+@app.route('/_update_player_status')
+# Update the player's status.  Status specified whether or not the player has paid.
+def update_player_status():
+  pid = request.args.get('pid', 0, type=int)
+  newStatus = request.args.get('newStatus', 0, type=int)
+  if newStatus == 1:
+    statusvalue = 1
+  elif newStatus == 0:
+    statusvalue = 0
+  else:
+    statusvalue = 0
+  
+  conn = connect_db()
+  dbcur = conn.cursor()
+  dbcur.execute("update player set status=%s where pid=%s", (statusvalue, pid))
+  conn.commit()
+  dbcur.close()
+  conn.close()
+  return jsonify(ret=0)
+
+@app.route('/_update_player_activity')
+# Update the player's activity status.  Inactive players cannot log in and will not show up as players.
+def update_player_activity():
+  pid = request.args.get('pid', 0, type=int)
+  active = request.args.get('active', 0, type=int)
+  if active == 1:
+    activevalue = True
+  elif active == 0:
+    activevalue = False
+  else:
+    activevalue = False
+
+  conn = connect_db()
+  dbcur = conn.cursor()
+  dbcur.execute("update player set active=%s where pid=%s", (activevalue, pid))
+  conn.commit()
+  dbcur.close()
+  conn.close()
+  return jsonify(ret=0)
+
+@app.route('/_update_location_status')
+# Update the location status.  Inactive locations are not available for league play/view.
+def update_location_status():
+  lid = request.args.get('lid', 0, type=int)
+  active = request.args.get('active', 0, type=int)
+  if active == 1:
+    activevalue = True
+  elif active == 0:
+    activevalue = False
+  else:
+    activevalue = False
+
+  conn = connect_db()
+  dbcur = conn.cursor()
+  dbcur.execute("update location set active=%s where lid=%s", (activevalue, lid))
+  conn.commit()
+  dbcur.close()
+  conn.close()
+  return jsonify(ret=0)
 
 @app.route('/players')
 def show_players():
@@ -153,6 +221,20 @@ def single_location_info():
     active = entry['active']
 
     return jsonify(lid=lid, name=name, address=address, notes=notes, active=active)
+
+@app.route('/_games_for_location')
+def games_for_location():
+  lid = request.args.get('lid', 0, type=int)
+  conn = connect_db()
+  dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  SQL = "select gid, name, condition, notes, active from game where lid=%s"
+  data = (lid,)
+  dbcur.execute(SQL, data)
+  entries = dbcur.fetchall()
+  dbcur.close()
+  conn.close()
+
+  return jsonify(games=entries)
 
 ##########################################
 # OPENID CONFIGURATION
