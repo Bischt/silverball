@@ -1,32 +1,510 @@
 {% extends "layout.html" %}
 {% block body %}
+
+<script type="text/javascript">
+// <!--
+$(document).ready(function() {
+	$('#leaguestandings').columnHover({eachCell:true, hoverClass:'betterhover'}); 
+});
+// -->
+</script>
+
+<style type="text/css">
+
+table {
+	width: 650px;
+}
+
+td.hover, #leaguestandings tbody tr:hover {
+	background-color: LemonChiffon;
+}
+
+td.betterhover, #leaguestandings tbody tr:hover {
+	background: LightCyan;
+}
+
+</style>
+
+
 <h2>League Standings</h2>
 
 <p>All league standings per season.  Select a week to see stats for that week.</p>
 
-<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
+<table cellpadding=0 cellspacing=0 border=0 id=leaguestandings>
 	<thead>
 		<tr>
-			<th>Player</th>
-			<th>Total</th>
-			<th style="font-size:9px;">WEEK 1</th>
-			<th style="font-size:9px;">WEEK 2</th>
-			<th style="font-size:9px;">WEEK 3</th>
-			<th style="font-size:9px;">WEEK 4</th>
-			<th style="font-size:9px;">WEEK 5</th>
-			<th style="font-size:9px;">WEEK 6</th>
-			<th style="font-size:9px;">WEEK 7</th>
-			<th style="font-size:9px;">WEEK 8</th>
-			<th style="font-size:9px;">WEEK 9</th>
-			<th style="font-size:9px;">WEEK 10</th>
-			<th style="font-size:9px;">WEEK 11</th>
-			<th style="font-size:9px;">WEEK 12</th>
-			<th style="font-size:9px;">WEEK 13</th>
-			<th style="font-size:9px;">WEEK 14</th>
-			<th style="font-size:9px;">WEEK 15</th>
-			<th style="font-size:9px;">Weeks Present</th>
+			<th rowspan="2">Player</th>
+			<th rowspan="2">Total</th>
+			<th colspan="15">Week</th>
+			<th style="font-size:9px;" rowspan="2">Weeks Present</th>
+		</tr>
+		<tr>
+			<th style="font-size:9px;">1</th>
+			<th style="font-size:9px;">2</th>
+			<th style="font-size:9px;">3</th>
+			<th style="font-size:9px;">4</th>
+			<th style="font-size:9px;">5</th>
+			<th style="font-size:9px;">6</th>
+			<th style="font-size:9px;">7</th>
+			<th style="font-size:9px;">8</th>
+			<th style="font-size:9px;">9</th>
+			<th style="font-size:9px;">10</th>
+			<th style="font-size:9px;">11</th>
+			<th style="font-size:9px;">12</th>
+			<th style="font-size:9px;">13</th>
+			<th style="font-size:9px;">14</th>
+			<th style="font-size:9px;">15</th>
 		</tr>
 	</thead>
+	<tfoot>
+		<tr>
+			<th rowspan="2">Player</th>
+			<th rowspan="2">Total</th>
+                        <th style="font-size:9px;">1</th>
+                        <th style="font-size:9px;">2</th>
+                        <th style="font-size:9px;">3</th>
+                        <th style="font-size:9px;">4</th>
+                        <th style="font-size:9px;">5</th>
+                        <th style="font-size:9px;">6</th>
+                        <th style="font-size:9px;">7</th>
+                        <th style="font-size:9px;">8</th>
+                        <th style="font-size:9px;">9</th>
+                        <th style="font-size:9px;">10</th>
+                        <th style="font-size:9px;">11</th>
+                        <th style="font-size:9px;">12</th>
+                        <th style="font-size:9px;">13</th>
+                        <th style="font-size:9px;">14</th>
+                        <th style="font-size:9px;">15</th>
+			<th style="font-size:9px;" rowspan="2">Weeks Present</th>
+		</tr>
+		<tr>
+                        <th colspan="15">Week</th>
+                </tr>
+
+	</tfoot>
+	<tbody>
+		<tr>
+			<td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+		</tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+                <tr>
+                        <td style="text-align:center;">Playername</td>
+                        <td style="text-align:center;">345</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">16</td>
+                        <td style="text-align:center;">15</td>
+                        <td style="text-align:center;">4</td>
+                        <td style="text-align:center;">10</td>
+                        <td style="text-align:center;">11</td>
+                        <td style="text-align:center;">12</td>
+                        <td style="text-align:center;">9</td>
+                        <td style="text-align:center;">7</td>
+                        <td style="text-align:center;">5</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">8</td>
+                        <td style="text-align:center;">15</td>
+                </tr>
+
+	</tbody>
 </table>
 
 {% endblock %}

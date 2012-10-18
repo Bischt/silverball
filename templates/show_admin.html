@@ -157,6 +157,7 @@ $(document).ready(function() {
 
 <h3>Season</h3>
 
+
 <button name="season" id="season" data-reveal-id="createseason" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Start New Season</button>
 
 <h3>Manage Users</h3>
@@ -196,7 +197,9 @@ $(document).ready(function() {
 	</tbody>
 </table>
 
+
 <h3>Manage Locations</h3>
+
 
 <table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable2 width=100%>
 	<thead>
@@ -221,6 +224,7 @@ $(document).ready(function() {
 	{% endfor %}
 	</tbody>
 </table>
+
 
 <p><a href="#" data-reveal-id="addlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Add New Location</a></p>
 
@@ -290,9 +294,10 @@ $(document).ready(function() {
 		</thead>
 		<tbody id="gamelistbody"></tbody>
 	</table>
-
-	<p><button name="deletelocation">Delete This Location</button></p>	
-
+	<div style="position:absolute; margin-top:15px;">
+	<p><a href="#">Add Game</a></p>
+	<p><button name="deletelocation">Delete This Location</button></p>
+	</div>
 	</div>
 	<a class="close-reveal-modal">&#215;</a>
 </div>
@@ -307,4 +312,5 @@ $(document).ready(function() {
 	</div>
 	<a class="close-reveal-modal">&#215;</a>
 </div>
+
 {% endblock %}

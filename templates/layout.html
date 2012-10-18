@@ -16,6 +16,8 @@
 
 <script type="text/javascript" src="/static/scripts/jquery.reveal.js"></script>
 
+<script type="text/javascript" src="/static/scripts/jquery.columnhover.js"></script>
+
 <script type="text/javascript" src="/static/scripts/jquery.dataTables.js"></script>
 
 <script type="text/javascript" charset="utf-8">
@@ -50,7 +52,12 @@ window.onload=function()
 {% include('header.html') %}
 {% include('globalNav.html') %}
 
-&nbsp;&nbsp;<a href="#" class="localnavlink">SubLink1</a> &nbsp; <a href="#" class="localnavlinkselected">SubLink2</a> &nbsp; <a href="#" class="localnavlink">SubLink3</a> &nbsp;
+&nbsp;&nbsp;<a href="/admin" class="localnavlinkselected">Admin</a>&nbsp;&nbsp;|&nbsp;
+{% if g.user %}
+	Hello {{ g.user.name }}! <a href="/logout" class="localnavlinkselected">Logout</a>
+{% else %}
+	<a href="/login" class="localnavlinkselected">Log in</a>
+{% endif %}
 
 {% include('localNav.html') %}
 

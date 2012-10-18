@@ -2,45 +2,7 @@
 {% block body %}
 
 <h2>Welcome</h2>
-{% if g.user %}
-<p>
-	<h3>Hello {{ g.user.name }}!</h3>
-	<p><a href="/logout">Logout</a></p>
-</p>
-{% else %}
-<p>
-	<a href="/login">Log in</a></p>
-</p>
-{% endif %}
-<ol>
-<li>Cirqus Voltaire</li>
-<li>Indiana Jones</li>
-<li>Theater of Magic</li>
-<li>Twilight Zone</li>
-</ol>
-
-<div id="myModal" class="reveal-modal">
-     <h1>Modal Title</h1>
-     <p>Any content could go in here.</p>
-     <a class="close-reveal-modal">&#215;</a>
-</div>
-
-<a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Click for a modal</a>
 
 
-<script type="text/javascript">
-$(document).ready(function() {
-	$('#myButton').click(function(e) {
-		e.preventDefault();
-		$('#myModal').reveal({
-			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-			animationspeed: 300,                       //how fast animtions are
-			closeonbackgroundclick: true,              //if you click background will modal close?
-			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-		});
-	});
-});
-</script>
 
-<button id="myButton">Show Window</button>
 {% endblock %}
