@@ -2,6 +2,7 @@
 {% block body %}
 
 <script type="text/javascript">
+//<!--
 $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
 // Render Location: AJAX call to grab specific location info
@@ -14,6 +15,37 @@ function rl(lid) {
 		$("#rendered_location_notes").text(data.notes);
 	});
 }
+
+// Show Games: AJAX call to grab all games for specified location
+function sg(lid) {
+	$.getJSON($SCRIPT_ROOT + '/_games_for_location', {
+	lid:lid
+	}, function(data) {
+		var gameoutput = "";
+		// Loop through all games for location
+		var toggle=0;
+		for (var i=0; i < data.games.length; i++) {
+			if (toggle == 0) {
+				gameoutput = gameoutput + '<tr class="odd">';
+				toggle = 1;
+			}
+			else {
+				gameoutput = gameoutput + '<tr class="even">';
+				toggle = 0;
+			}
+			// Loop through all details for particular game
+			var game = data.games[i];
+
+			gameoutput = gameoutput + '<td class="sorting_1">' + game[1] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game[2] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game[3] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game[4] + "</td>";
+			gameoutput = gameoutput + "</tr>";
+		}
+		$("#gamelistbody").html(gameoutput);
+	});
+}
+//-->
 </script>
 
 <h2>Locations</h2>
@@ -31,7 +63,7 @@ List of places to play
 	<tbody>
 	{% for entry in entries %}
 	<tr>
-		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
+		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }}); sg({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
 		<td>{{ entry['address'] }}</td>
 		<td></td>
 	</tr>
@@ -58,21 +90,7 @@ List of places to play
 			<th>Available for League</th>
 		</tr>
 		</thead>
-		<tbody>
-		<tr>
-			<td>Theater of Magic</td>
-			<td>Glorious Condition</td>
-			<td>Playfield recently shined</td>
-			<td>Yes</td>
-		</tr>
-		<tr>    
-                        <td>Tales of the Arabian Nights</td>
-                        <td>Sad Sad Day</td>
-                        <td>Random resets</td>
-                        <td>No</td>
-                </tr>
-	
-		</tbody>
+		<tbody id="gamelistbody"></tbody>
 	</table>
 	</div>
 	<a class="close-reveal-modal">&#215;</a>

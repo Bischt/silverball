@@ -166,7 +166,7 @@ $(document).ready(function() {
 	<thead>
 		<tr>
 			<th>Nick</th>
-			<th>Name</th>
+			<th width=200>Name</th>
 			<th>Email</th>
 			<th>Status</th>
 			<th>Active</th>
@@ -176,7 +176,7 @@ $(document).ready(function() {
 	{% for entry in entries %}
 	<tr>
 		<td>{{ entry['nick'] }}</td>
-		<td>{{ entry['name'] }}</td>
+		<td width=200>{{ entry['name'] }}</td>
 		<td><a href="mailto:{{ entry['email'] }}">{{ entry['email'] }}</a></td>
 		<td>
 		<select name="ispaid-{{ entry['pid'] }}" onchange="javascript:setStatus(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">

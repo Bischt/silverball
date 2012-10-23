@@ -190,6 +190,14 @@ def single_player_profile():
 def show_standings():
   return render_template('show_standings.html', title='Standings', highlightActive='standings')
 
+@app.route('/voting')
+def show_voting():
+  return render_template('show_voting.html', title='Voting', highlightActive='voting')
+
+@app.route('/scores')
+def show_scores():
+  return render_template('show_scores.html', title='Scores', highlightActive='scores')
+
 @app.route('/locations')
 def show_locations():
   conn = connect_db()
