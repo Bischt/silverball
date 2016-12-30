@@ -5,7 +5,7 @@
 import psycopg2
 import psycopg2.extras
 from flask import Flask, jsonify, request, session, g, redirect, url_for, abort, render_template, flash
-from flaskext.openid import OpenID
+from flask_openid import OpenID
 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker

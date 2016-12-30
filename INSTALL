@@ -7,16 +7,20 @@ Silverball is a Python Flask application which runs in uWSGI and proxied by Ngin
 The database powering Silverball is Postgres.  The directions are geared towards
 an Ubuntu install but they would only change slightly for RHEL or other distributions.
 
+DEBUG LOGGING:
+
+Application Logging: /var/log/uwsgi/app/config.log
+NGINX Logs: /var/log/nginx/
+
 0.  Install packages
 	~$ sudo apt-get install postgresql
-	~$ sudo apt-get install postgresql-server-dev-9.1
+	~$ sudo apt-get install postgresql-server-dev-9.5
 	~$ sudo apt-get install python-setuptools
 	~$ sudo apt-get install python-virtualenv
 	~$ sudo apt-get install python-dev
 	~$ sudo apt-get install nginx
 	~$ sudo apt-get install uwsgi
 	~$ sudo apt-get install uwsgi-plugin-python
-	~$ sudo apt-get install uwsgi-plugin-http
 
 1.  Create and populate python environment
 	Generally I create a python virtural environment to run the app inside
@@ -137,3 +141,17 @@ an Ubuntu install but they would only change slightly for RHEL or other distribu
 			root	/usr/share/nginx/html;
 		}
 	}
+
+5.  Start Services
+
+	~$ sudo /etc/init.d/uwsgi start
+	~$ sudo /etc/init.d/nginx start
+	~$ sudo /etc/init.d/postgresql start
+
+6.  Configure Postgress
+
+	~$ sudo -u postgres createuser dwai -P
+		Enter Password: silverball
+	~$ sudo -u postgres createdb -O dwai silverball
+	~$ psql silverball < schema.sql
+	
