@@ -11,20 +11,14 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# Configuration
-DB_HOST = 'localhost'
-DB_NAME = 'silverball'
-DB_USER = 'dwai'
-DB_PASS = 'silverball'
-
 ########################
 ########################
 
-app = Flask(__name__)
-app.config.from_object(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config')
 
 # Debugging.  Turn this off when done!
-app.debug = True
+app.debug = app.config["DEBUG"]
 
 # Config for OpenID
 app.config.update(
@@ -35,7 +29,8 @@ app.config.update(
 # Connect to database
 def connect_db():
   try:
-    return psycopg2.connect("dbname='silverball' user='dwai' host='localhost' password='silverball'")
+    conn_string = "dbname=%s user=%s host=%s password=%s" % (app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_HOST"], app.config["DB_PASS"])
+    return psycopg2.connect(conn_string)
     print "DB connection successful!"
   except:
     print "I am unable to connect to the database"
@@ -378,4 +373,4 @@ def logout():
 ##########################################
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', debug=True)
+  app.run(host='0.0.0.0', debug=app.config["DEBUG"])
