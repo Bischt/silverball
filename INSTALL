@@ -121,7 +121,7 @@ NGINX Logs: /var/log/nginx/
 		server_name	localhost;
 
 		location /static {
-			alias /home/dwai/silverball-project/files/static;
+			alias /home/dwai/silverball-project/files/silverball/static;
 		}
 
 		location / {
