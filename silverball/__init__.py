@@ -172,9 +172,9 @@ def single_player_profile():
 def show_standings():
   return render_template('show_standings.html', title='Standings', highlightActive='standings')
 
-@app.route('/voting')
-def show_voting():
-  return render_template('show_voting.html', title='Voting', highlightActive='voting')
+@app.route('/checkin')
+def show_checkin():
+  return render_template('show_checkin.html', title='Check In', highlightActive='checkin')
 
 @app.route('/scores')
 def show_scores():
