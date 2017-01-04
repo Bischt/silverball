@@ -76,6 +76,8 @@ Features
   * Length of season
   * Number of games played per session
   * Scoring rules/values
+  * Number of nights required to quality/receive WPPR points
+  * Number of low scores to drop
   * Seeding
   * Rolling groups
   * Game selection
