@@ -1,0 +1,55 @@
+/*******************************************************
+ * GENERIC ROUND CORNER STYLES
+ *******************************************************/
+.redbar
+{
+	background-color:rgb(244, 146, 146);
+	position:relative;
+	top:-65px;
+	width:685px;
+
+	z-index:2;
+	margin-bottom:30px;
+}
+
+.redbarcontent
+{
+	position:relative;
+	margin-right:10px;
+	font-weight:bold;
+}
+
+.redroundtop, .redroundbottom
+{
+	display:block;
+	background-color:rgb(176,212,248);
+}
+
+.redroundtop *, .redroundbottom *
+{
+	display:block;
+	height:1px;
+	overflow:hidden;
+	/*background-color:rgb(213,232,251);*/
+	background-color:rgb(244, 146, 146);
+}
+
+.redcurve1
+{
+	margin:0 5px;
+}
+
+.redcurve2
+{
+	margin:0 3px;
+}
+
+.redcurve3
+{
+	margin:0 2px;
+}
+
+.redcurve4
+{
+	margin:0 1px;
+}
