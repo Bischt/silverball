@@ -1,6 +1,6 @@
 import psycopg2
 import psycopg2.extras
-from flask import Flask, jsonify, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash
 from flask_openid import OpenID
 
 from sqlalchemy import create_engine, Column, Integer, String
@@ -46,6 +46,7 @@ def show_home():
   return render_template('show_home.html', title="Home", highlightActive='home')
 
 @app.route('/admin')
+@app.route('/admin/runleague')
 def show_admin():
   conn = connect_db()
   dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -55,7 +56,27 @@ def show_admin():
   locations = dbcur.fetchall()
   dbcur.close()
   conn.close()
-  return render_template('show_admin.html', title="Admin", entries=entries, locations=locations)
+  return render_template('show_admin.html', title="Admin - Run League", highlightActive='runleague', entries=entries, locations=locations)
+
+@app.route('/admin/players')
+def show_admin_players():
+  return render_template('show_admin_players.html', title="Admin - Manage Players", highlightActive='players')
+
+@app.route('/admin/locations')
+def show_admin_locations():
+  return render_template('show_admin_locations.html', title="Admin - Manage Locations", highlightActive='locations')
+
+@app.route('/admin/content')
+def show_admin_content():
+  return render_template('show_admin_content.html', title="Admin - Edit Content", highlightActive='content')
+
+@app.route('/admin/config')
+def show_admin_config():
+  return render_template('show_admin_config.html', title="Admin - Configure League", highlightActive='configure')
+
+@app.route('/admin/data')
+def show_admin_data():
+  return render_template('show_admin_data.html', title="Admin - Export Data", highlightActive='export')
 
 @app.route('/_update_player_status')
 # Update the player's status.  Status specified whether or not the player has paid.

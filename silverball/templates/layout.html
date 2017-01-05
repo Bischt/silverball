@@ -50,7 +50,8 @@ window.onload=function()
 <body>
 <div style="width:685px; margin:0 auto;">
 {% include('header.html') %}
-{% include('globalNav.html') %}
+
+{% block nav %}{% endblock %}
 
 &nbsp;&nbsp;<a href="/admin" class="localnavlinkselected">Admin</a>&nbsp;&nbsp;
 
