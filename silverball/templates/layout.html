@@ -3,23 +3,23 @@
 <head>
 <title>Silverball - {% print title %}</title>
 
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/default.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/roundedcorners.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/navstyles.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/redbar.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/datatables.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/styles/reveal.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/default.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/roundedcorners.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/navstyles.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/redbar.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/jquery-ui.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/datatables.css') }}" />
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='styles/reveal.css') }}" />
 
-<script type="text/javascript" src="/static/scripts/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.8.2.min.js') }}"></script>
 
-<script type="text/javascript" src="/static/scripts/jquery-ui-1.9.0.custom.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-ui-1.9.0.custom.min.js') }}"></script>
 
-<script type="text/javascript" src="/static/scripts/jquery.reveal.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.reveal.js') }}"></script>
 
-<script type="text/javascript" src="/static/scripts/jquery.columnhover.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.columnhover.js') }}"></script>
 
-<script type="text/javascript" src="/static/scripts/jquery.dataTables.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.dataTables.js') }}"></script>
 
 <script type="text/javascript" charset="utf-8">
 	$(document).ready(function() {
@@ -35,8 +35,8 @@
 	} );
 </script>
 
-<script type="text/javascript" src="/static/scripts/openid.js"></script>
-<script type="text/javascript" src="/static/scripts/navselection.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/openid.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/navselection.js') }}"></script>
 
 <script type="text/javascript">
 //<!--
