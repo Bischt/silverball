@@ -21,32 +21,35 @@ app.debug = app.config["DEBUG"]
 
 # Connect to database
 def connect_db():
-  try:
-    conn_string = "dbname=%s user=%s host=%s password=%s" % (app.config["DB_NAME"], app.config["DB_USER"], app.config["DB_HOST"], app.config["DB_PASS"])
-    return psycopg2.connect(conn_string)
-    print "DB connection successful!"
-  except:
-    print "I am unable to connect to the database"
-    exit(1)
+    try:
+        conn_string = "dbname=%s user=%s host=%s password=%s" % (app.config["DB_NAME"], 
+                                                                 app.config["DB_USER"], 
+                                                                 app.config["DB_HOST"], 
+                                                                 app.config["DB_PASS"])
+        return psycopg2.connect(conn_string)
+        print "DB connection successful!"
+    except:
+        print "I am unable to connect to the database"
+        exit(1)
 
 # Initialize database
 def init_db():
-  print "Initializing database..."
+    print "Initializing database..."
   
-  conn = connect_db()
-  dbcur = conn.cursor()
+    conn = connect_db()
+    dbcur = conn.cursor()
 
-  try:
-    procedures = open('schema.sql','r').read()
-    dbcur.execute(procedures)
-    dbcur.execute("COMMIT")
-    print "Database schema initialized!"
-  except psycopg2.DatabaseError, e:
-    print
-    print "EXCEPTION: procedures :%s" % str(e)
-    print
-    exit(1)
+    try:
+        procedures = open('schema.sql','r').read()
+        dbcur.execute(procedures)
+        dbcur.execute("COMMIT")
+        print "Database schema initialized!"
+    except psycopg2.DatabaseError, e:
+        print
+        print "EXCEPTION: procedures :%s" % str(e)
+        print
+        exit(1)
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', debug=app.config["DEBUG"])
+    app.run(host='0.0.0.0', debug=app.config["DEBUG"])
