@@ -151,3 +151,8 @@ NGINX Logs: /var/log/nginx/
 	~$ sudo -u postgres createdb -O dwai silverball
 	~$ psql silverball < schema.sql
 	
+7.  Setup instance config.  This is where secret credentials are so it's not committed to a repo.
+
+	~$ mkdir instance
+        Copy secret variables from config.py into instance/config.py
+	Then edit instance/config.py and update variables with appropriate secret values

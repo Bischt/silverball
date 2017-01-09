@@ -7,19 +7,18 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+
 app=Flask(__name__)
-with app.app_context():
-    current_app.config.from_object('config')
 
 player = Blueprint('player', __name__, static_folder='../static', template_folder='../templates')
 
 # Connect to database
 def connect_db():
     try:
-        conn_string = "dbname=%s user=%s host=%s password=%s" % (app.config["DB_NAME"], 
-                                                                 app.config["DB_USER"], 
-                                                                 app.config["DB_HOST"], 
-                                                                 app.config["DB_PASS"])
+        conn_string = "dbname=%s user=%s host=%s password=%s" % (current_app.config["DB_NAME"], 
+                                                                 current_app.config["DB_USER"], 
+                                                                 current_app.config["DB_HOST"], 
+                                                                 current_app.config["DB_PASS"])
         return psycopg2.connect(conn_string)
         print "DB connection successful!"
     except:
