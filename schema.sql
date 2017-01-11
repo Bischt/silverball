@@ -1,11 +1,12 @@
 drop table if exists player;
 create table player (
   pid SERIAL primary key not null,
-  nick varchar(255) not null,
+  nick varchar(255),
   name varchar(255),
   email varchar(255),
   phone varchar(25),
   location varchar(255),
+  ifpaNumber integer,
   pinside varchar(30),
   notes text,
   status integer,
@@ -27,8 +28,23 @@ create table location (
   lid SERIAL primary key not null,
   name varchar(255) not null,
   address varchar(255),
+  addressPrivate boolean,
   notes text,
+  locType integer,
   active boolean
+);
+
+drop table if exists machines;
+create table machines (
+  mid SERIAL primary key not null,
+  name varchar(255) not null,
+  abbr varchar(50),
+  manufacturer varchar(150),
+  manDate varchar(100),
+  players varchar(2),
+  gameType varchar(5),
+  theme varchar(150),
+  ipdbURL varchar(150)
 );
 
 ---------------------------------------------------------
