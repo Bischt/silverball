@@ -93,7 +93,7 @@ def update_location_status():
 def show_players():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute("select pid, nick, name, email, phone, location, pinside, notes, status from player where active=True;")
+    dbcur.execute("select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status from player where active=True;")
     entries = dbcur.fetchall()
     dbcur.close()
     conn.close()
@@ -104,7 +104,7 @@ def show_player_by_name(username):
     # Show the user profile for the specific name provided
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, phone, location, pinside, notes, status, active from player where active=True and nick=%s;"
+    SQL = "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player where active=True and nick=%s;"
     data = (username, )
     dbcur.execute(SQL, data)
     entries = dbcur.fetchall()
@@ -119,12 +119,14 @@ def single_player_profile():
     pid = request.args.get('pid', 0, type=int)
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, phone, location, pinside, notes, status, active from player where active=True and pid=%s;"
+    SQL = "select pid, nick, name, phone, location, ifpanumber, pinside, notes, status, active from player where active=True and pid=%s;"
     data = (pid, )
     dbcur.execute(SQL, data)
     entries = dbcur.fetchall()
     dbcur.close()
     conn.close()
+
+    # Make API call to IFPA to refresh stored player info
 
     # Parse out results and compile into JSON
     for entry in entries:
@@ -133,12 +135,13 @@ def single_player_profile():
         name = entry['name']
         phone = entry['phone']
         location = entry['location']
+	ifpanumber = entry['ifpanumber']
         pinside = entry['pinside']
         notes = entry['notes']
         status = entry['status']
         active = entry['active']
 
-    return jsonify(pid=pid, nick=nick, name=name, phone=phone, location=location, 
+    return jsonify(pid=pid, nick=nick, name=name, ifpanumber=ifpanumber, phone=phone, location=location, 
                    pinside=pinside, notes=notes, status=status, active=active)
 
 @player.route('/standings')

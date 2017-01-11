@@ -1,3 +1,4 @@
+import sys
 import psycopg2
 import psycopg2.extras
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash
@@ -9,6 +10,10 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from silverball.player import player
 from silverball.admin import admin
+
+# Ensure we are using utf8 so we don't get odd encoding problems
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')

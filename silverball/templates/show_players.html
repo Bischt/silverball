@@ -15,7 +15,20 @@ function rp(pid) {
 	pid: pid
 	}, function(data) {
         	$("#rendered_player_name").text(data.name);
-		$("#rendered_player_nick").text(data.nick);
+
+		var initials = "";
+		if (data.nick != "") {
+			initials = " ("+data.nick+")";
+		}
+
+		var ifpa = "";
+		if (data.ifpanumber != null) {
+			ifpa = data.ifpanumber;
+		}
+
+		$("#rendered_player_nick").text(initials);
+		$("#rendered_player_ifpa").text(ifpa);
+		$("#rendered_player_ifpa").attr("href", 'https://www.ifpapinball.com/player.php?p='+ifpa);
 		$("#rendered_player_phone").text(data.phone);
 		$("#rendered_player_location").text(data.location);
 		$("#rendered_player_pinside").attr("href", 'http://pinside.com/pinball/community/pinsiders/'+data.pinside);
@@ -31,8 +44,8 @@ function rp(pid) {
 <table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
 	<thead>
 		<tr>
-			<th>Nick</th>
-			<th>Name</th>
+			<th>Player</th>
+			<th>IFPA #</th>
 			<th>Email</th>
 			<th>Phone</th>
 		</tr>
@@ -40,8 +53,16 @@ function rp(pid) {
 	<tbody>
 	{% for entry in entries %}
 	<tr>
-		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rp({{ entry['pid'] }});">{{ entry['nick'] }}</a></td>
-		<td>{{ entry['name'] }}</td>
+		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rp({{ entry['pid'] }});">{{ entry['name'] }}
+		{% if entry['nick'] %}
+		({{ entry['nick'] }})
+		{% endif %}
+		</a></td>
+		<td>
+		{% if entry['ifpanumber'] %}
+		<a href="https://www.ifpapinball.com/player.php?p={{ entry['ifpanumber'] }}">{{ entry['ifpanumber'] }}</a>
+		{% endif %}
+		</td>
 		<td>{{ entry['email'] }}</td>
 		<td>{{ entry['phone'] }}</td>
 	</tr>
@@ -53,9 +74,10 @@ function rp(pid) {
 
 <!--Popup to show player details-->
 <div id="myModal" class="reveal-modal">
-        <h1><span id="rendered_player_name"></span> (<span id="rendered_player_nick"></span>)</h1>
+        <h1><span id="rendered_player_name"></span><span id="rendered_player_nick"></span></h1>
         <p>Any content could go in here.</p>
         <div>
+	<b>IFPA #: </b><a href="" id="rendered_player_ifpa"></span><span id="rendered_player_ifpa"></span></a>
         <b>Phone: </b><span id="rendered_player_phone"></span>
         <b>Location: </b><span id="rendered_player_location"></span>
         <b>Pinside: </b><a href="" id="rendered_player_pinside">Pinside</a>
