@@ -50,6 +50,43 @@ function sg(lid) {
 		$("#gamelistbody").html(gameoutput);
 	});
 }
+
+// Update location status
+function setLocationActive(lid, active) {
+	$.getJSON($SCRIPT_ROOT + '/admin/_update_location_status', {
+	lid:lid,
+	active:active
+	}, function(data) {
+
+	});
+}
+
+// Will render window to edit location
+$(document).ready(function() {
+	$('#eloc').click(function(e) {
+		e.preventDefault();
+		$('#editlocation').reveal({
+			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
+			animationspeed: 300,                       //how fast animtions are
+			closeonbackgroundclick: true,              //if you click background will modal close?
+			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+		});
+	});
+});
+
+// Will render window to add new location
+$(document).ready(function() {
+	$('#aloc').click(function(e) {
+		e.preventDefault();
+		$('#addlocation').reveal({
+			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
+			animationspeed: 300,                       //how fast animtions are
+			closeonbackgroundclick: true,              //if you click background will modal close?
+			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+		});
+	});
+});
+
 //-->
 </script>
 
@@ -78,15 +115,17 @@ List of places to play
 	</tbody>
 </table>
 
-<!--Popup to show player details-->
-<div id="myModal" class="reveal-modal">
+<!--Popup for editing location/adding games to location-->
+<div id="editlocation" class="reveal-modal">
 	<h1><span id="rendered_location_name"></span></h1>
-	
+
 	<div>
+	<p>Edit location.  Add/edit games at a location</p>
+
 	<p><b>Address: </b><span id="rendered_location_address"></span></p>
 	<p><b>Notes: </b><span id="rendered_location_notes"></span></p>
-	<h3>Games on Location</h3>
-	<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable2 width=100%>
+
+	<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable3 width=100%>
 		<thead>
 		<tr>
 			<th>Name</th>
@@ -97,9 +136,23 @@ List of places to play
 		</thead>
 		<tbody id="gamelistbody"></tbody>
 	</table>
+	<div style="position:absolute; margin-top:15px;">
+	<p><a href="#">Add Game</a></p>
+	<p><button name="deletelocation">Delete This Location</button></p>
+	</div>
 	</div>
 	<a class="close-reveal-modal">&#215;</a>
 </div>
 
+<!--Popup for adding new location-->
+<div id="addlocation" class="reveal-modal">
+	<h1>Add New Location</h1>
+
+	<div>
+	<p>Add new location for league play.</p>
+
+	</div>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
 
 {% endblock %}

@@ -9,78 +9,6 @@
 <script type="text/javascript">
 $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
-// Show location details
-function showLocation(lid) {
-	$.getJSON($SCRIPT_ROOT + '/_single_location_info', {
-	lid: lid
-	}, function(data) {
-		$("#rendered_location_name").text(data.name);
-		$("#rendered_location_address").text(data.address);
-		$("#rendered_location_notes").text(data.notes);
-		$("#rendered_location_active").text(data.active);
-	});
-}
-
-// Show games for location
-function showGames(lid) {
-	$.getJSON($SCRIPT_ROOT + '_games_for_location', {
-	lid: lid
-	}, function(data) {
-		var gameoutput = "";
-		// Loop through all games for location
-		var toggle = 0;
-		for (var i=0; i < data.games.length; i++) {
-			if (toggle == 0) {
-				gameoutput = gameoutput + '<tr class="odd">';
-				toggle = 1;
-			}
-			else {
-				gameoutput = gameoutput + '<tr class="even">';
-				toggle = 0;
-			}
-			// Loop through all details for particular game
-			var game = data.games[i];
-
-			gameoutput = gameoutput + '<td class="sorting_1">' + game[1] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[2] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[3] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[4] + "</td>";
-			gameoutput = gameoutput + "</tr>";
-		}
-		$("#gamelistbody").html(gameoutput);
-	});
-}
-
-// Update player status
-function setStatus(pid, newStatus) {
-	$.getJSON($SCRIPT_ROOT + '/_update_player_status', {
-	pid: pid,
-	newStatus: newStatus
-	}, function(data) {
-
-	});
-}
-
-// Update player activity
-function setActivity(pid, active) {
-	$.getJSON($SCRIPT_ROOT + '/_update_player_activity', {
-	pid: pid,
-	active: active
-	}, function(data) {
-
-	});
-}
-
-// Update location status
-function setLocationActive(lid, active) {
-	$.getJSON($SCRIPT_ROOT + '/_update_location_status', {
-	lid:lid,
-	active:active
-	}, function(data) {
-
-	});
-}
-
 // Display date picker when scheduling a league night
 $(function() {
 	$( "#leaguenightdate" ).datepicker();
@@ -125,32 +53,6 @@ $(document).ready(function() {
 	});
 });
 
-// Will render window to edit location
-$(document).ready(function() {
-	$('#eloc').click(function(e) {
-		e.preventDefault();
-		$('#editlocation').reveal({
-			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-			animationspeed: 300,                       //how fast animtions are
-			closeonbackgroundclick: true,              //if you click background will modal close?
-			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-		});
-	});
-});
-
-// Will render window to add new location
-$(document).ready(function() {
-	$('#aloc').click(function(e) {
-		e.preventDefault();
-		$('#addlocation').reveal({
-			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-			animationspeed: 300,                       //how fast animtions are
-			closeonbackgroundclick: true,              //if you click background will modal close?
-			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-		});
-	});
-});
-
 </script>
 
 <h2>Run League</h2>
@@ -165,73 +67,6 @@ $(document).ready(function() {
 
 <button name="season" id="season" data-reveal-id="createseason" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Start New Season</button>
 
-<h3>Manage Users</h3>
-
-<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
-	<thead>
-		<tr>
-			<th>Nick</th>
-			<th width=200>Name</th>
-			<th>Email</th>
-			<th>Status</th>
-			<th>Active</th>
-		</tr>
-	</thead>
-	<tbody>
-	{% for entry in entries %}
-	<tr>
-		<td>{{ entry['nick'] }}</td>
-		<td width=200>{{ entry['name'] }}</td>
-		<td><a href="mailto:{{ entry['email'] }}">{{ entry['email'] }}</a></td>
-		<td>
-		<select name="ispaid-{{ entry['pid'] }}" onchange="javascript:setStatus(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
-			<option value="1"{% if entry['status'] == 1 %} selected{% endif %}>Paid</option>
-			<option value="0"{% if entry['status'] == 0 %} selected{% endif %}>Not Paid</option>
-		</select>
-		</td>
-		<td>
-		<select name="isactive-{{ entry['pid'] }}" onchange="javascript:setActivity(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
-			<option value="1"{% if entry['active'] == True %} selected{% endif %}>Yes</option>
-			<option value="0"{% if entry['active'] == False %} selected{% endif %}>No</option>
-		</select>
-		</td>
-	</tr>
-	{% else %}
-	<tr><td>No entries.</td><td></td><td></td><td></td><td></td></tr>
-	{% endfor %}
-	</tbody>
-</table>
-
-
-<h3>Manage Locations</h3>
-
-
-<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable2 width=100%>
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Active</th>
-		</tr>
-	</thead>
-	<tbody>
-	{% for location in locations %}
-	<tr>
-		<td><a href="#" data-reveal-id="editlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showLocation({{ location['lid'] }}); showGames({{ location['lid'] }});">{{ location['name'] }}</a></td>
-		<td>
-		<select name="activeloc-{{ location['lid'] }}" onchange="javascript:setLocationActive(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
-			<option value="1"{% if location['active'] == 1 %} selected{% endif %}>Active</option>
-			<option value="0"{% if location['active'] == 0 %} selected{% endif %}>Inactive</option>
-		</select>
-		</td>
-	</tr>
-	{% else %}
-	<tr><td>No entries.</td></tr>
-	{% endfor %}
-	</tbody>
-</table>
-
-
-<p><a href="#" data-reveal-id="addlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Add New Location</a></p>
 
 <!--Popup for beginning league night-->
 <div id="beginnight" class="reveal-modal">
@@ -274,46 +109,6 @@ $(document).ready(function() {
 	<form name="createseasonform" id="createseasonform">
 
 	</form>
-	</div>
-	<a class="close-reveal-modal">&#215;</a>
-</div>
-
-<!--Popup for editing location/adding games to location-->
-<div id="editlocation" class="reveal-modal">
-	<h1><span id="rendered_location_name"></span></h1>
-
-	<div>
-	<p>Edit location.  Add/edit games at a location</p>
-	
-	<p><b>Address: </b><span id="rendered_location_address"></span></p>
-	<p><b>Notes: </b><span id="rendered_location_notes"></span></p>
-
-	<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable3 width=100%>
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Condition</th>
-			<th>Notes</th>
-			<th>Available for League</th>
-		</tr>
-		</thead>
-		<tbody id="gamelistbody"></tbody>
-	</table>
-	<div style="position:absolute; margin-top:15px;">
-	<p><a href="#">Add Game</a></p>
-	<p><button name="deletelocation">Delete This Location</button></p>
-	</div>
-	</div>
-	<a class="close-reveal-modal">&#215;</a>
-</div>
-
-<!--Popup for adding new location-->
-<div id="addlocation" class="reveal-modal">
-	<h1>Add New Location</h1>
-
-	<div>
-	<p>Add new location for league play.</p>
-
 	</div>
 	<a class="close-reveal-modal">&#215;</a>
 </div>

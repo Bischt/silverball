@@ -83,7 +83,70 @@ def admin_player_info():
 
 @admin.route('/admin/locations')
 def show_admin_locations():
-    return render_template('show_admin_locations.html', title="Admin - Manage Locations", highlightActive='locations')
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    dbcur.execute("select lid, name, address, active, notes from location order by active")
+    locations = dbcur.fetchall()
+    dbcur.close()
+    conn.close()
+    return render_template('show_admin_locations.html', title="Admin - Manage Locations", highlightActive='locations',
+                           locations=locations)
+
+@admin.route('/admin/_admin_location_info')
+def admin_location_info():
+    lid = request.args.get('lid', 0, type=int)
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    SQL = "select lid, name, address, notes, active from location where lid=%s;"
+    data = (lid,)
+    dbcur.execute(SQL, data)
+    entries = dbcur.fetchall()
+    dbcur.close()
+    conn.close()
+
+    # Parse out results and compile into JSON
+    for entry in entries:
+        lid = entry['lid']
+        name = entry['name']
+        address = entry['address']
+        notes = entry['notes']
+        active = entry['active']
+
+        return jsonify(lid=lid, name=name, address=address, notes=notes, active=active)
+
+@admin.route('/admin/_games_for_location')
+def games_for_location():
+    lid = request.args.get('lid', 0, type=int)
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    SQL = "select gid, name, condition, notes, active from game where lid=%s"
+    data = (lid,)
+    dbcur.execute(SQL, data)
+    entries = dbcur.fetchall()
+    dbcur.close()
+    conn.close()
+
+    return jsonify(games=entries)
+
+@admin.route('/admin/_update_location_status')
+# Update the location status.  Inactive locations are not available for league play/view.
+def update_location_status():
+    lid = request.args.get('lid', 0, type=int)
+    active = request.args.get('active', 0, type=int)
+    if active == 1:
+        activevalue = True
+    elif active == 0:
+        activevalue = False
+    else:
+        activevalue = False
+
+    conn = connect_db()
+    dbcur = conn.cursor()
+    dbcur.execute("update location set active=%s where lid=%s", (activevalue, lid))
+    conn.commit()
+    dbcur.close()
+    conn.close()
+    return jsonify(ret=0)
 
 @admin.route('/admin/content')
 def show_admin_content():
