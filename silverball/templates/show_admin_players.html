@@ -6,8 +6,127 @@
 
 {% block body %}
 
+<script type="text/javascript">
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+// Show player details
+function showPlayer(pid) {
+	$.getJSON($SCRIPT_ROOT + '/admin/_admin_player_info', {
+	pid: pid
+	}, function(data) {
+		$("#rendered_player_nick").text(data.nick);
+		if (data.nick != "") {
+			$("#rendered_player_header").text(data.name + " (" + data.nick + ")");
+		} 
+		else {
+			$("#rendered_player_header").text(data.name);
+		}
+		$("#rendered_player_name").text(data.name);
+		$("#rendered_player_phone").text(data.phone);
+		$("#rendered_player_email").text(data.email);
+		$("#rendered_player_location").text(data.location);
+		$("#rendered_player_ifpa").text(data.ifpanumber);
+		$("#rendered_player_pinside").text(data.pinside);
+		$("#rendered_player_notes").text(data.notes);
+	});
+}
+
+// Update player status
+function setStatus(pid, newStatus) {
+	$.getJSON($SCRIPT_ROOT + '/_update_player_status', {
+	pid: pid,
+	newStatus: newStatus
+	}, function(data) {
+
+	});
+}
+
+// Update player activity
+function setActivity(pid, active) {
+	$.getJSON($SCRIPT_ROOT + '/_update_player_activity', {
+	pid: pid,
+	active: active
+	}, function(data) {
+
+	});
+
+// Will render window to edit player
+$(document).ready(function() {
+	$('#epla').click(function(e) {
+		e.preventDefault();
+		$('#editplayer').reveal({
+			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
+			animationspeed: 300,                       //how fast animtions are
+			closeonbackgroundclick: true,              //if you click background will modal close?
+			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+                });
+        });
+});
+
+}
+
+</script>
+
 <h2>Manage Players</h2>
 
+<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
+        <thead>
+                <tr>
+                        <th>Initials</th>
+                        <th width=200>Name</th>
+                        <th>IFPA#</th>
+                        <th>Status</th>
+                        <th>Active</th>
+                </tr>
+        </thead>
+        <tbody>
+        {% for entry in entries %}
+        <tr>
+                <td><input type="text" name="nick-{{ entry['pid'] }}" value="{{ entry['nick'] }}" size="5" /></td>
+                <td width=200><a href="#" data-reveal-id="editplayer" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showPlayer({{ entry['pid'] }});">{{ entry['name'] }}</a></td>
+                <td><input type="text" name="ifpa-{{ entry['pid'] }}" value="{{ entry['ifpanumber'] }}" size="10" /></td>
+                <td>
+                <select name="ispaid-{{ entry['pid'] }}" onchange="javascript:setStatus(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
+                        <option value="1"{% if entry['status'] == 1 %} selected{% endif %}>Paid</option>
+                        <option value="0"{% if entry['status'] == 0 %} selected{% endif %}>Not Paid</option>
+                </select>
+                </td>
+                <td>
+                <select name="isactive-{{ entry['pid'] }}" onchange="javascript:setActivity(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
+                        <option value="true"{% if entry['active'] == True %} selected{% endif %}>Yes</option>
+                        <option value="false"{% if entry['active'] == False %} selected{% endif %}>No</option>
+                </select>
+                </td>
+        </tr>
+        {% else %}
+        <tr><td>No entries.</td><td></td><td></td><td></td><td></td></tr>
+        {% endfor %}
+        </tbody>
+</table>
 
+<p><a href="#" data-reveal-id="addplayer" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Add New Player</a></p>
+
+<!--Popup for editing location/adding games to location-->
+<div id="editplayer" class="reveal-modal">
+	<h1><span id="rendered_player_header"></span></h1>
+
+	<div>
+	<p>Edit player.</p>
+
+	<p><b>Initials: </b><span id="rendered_player_nick"></span></p>
+	<p><b>Name: </b><span id="rendered_player_name"></span></p>
+	<p><b>Phone: </b><span id="rendered_player_phone"></span></p>
+	<p><b>Email: </b><span id="rendered_player_email"></span></p>
+	<p><b>Location: </b><span id="rendered_player_location"></span></p>
+	<p><b>IFPA #: </b><span id="rendered_player_ifpa"</span></p>
+	<p><b>Pinside: </b><span id="rendered_player_pinside"</span></p>
+	<p><b>Notes: </a><span id="rendered_player_notes"</span></p>
+
+	<div style="position:absolute; margin-top:15px;">
+	<p><button name="deleteplayer">Delete This Player</button></p>
+	</div>
+	</div>
+	<a class="close-reveal-modal">&#215;</a>
+</div>
 
 {% endblock %}

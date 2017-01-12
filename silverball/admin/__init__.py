@@ -40,7 +40,46 @@ def show_admin():
 
 @admin.route('/admin/players')
 def show_admin_players():
-    return render_template('show_admin_players.html', title="Admin - Manage Players", highlightActive='players')
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    dbcur.execute("select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player order by active")
+    playerEntries = dbcur.fetchall()
+    dbcur.close()
+    conn.close()
+    return render_template('show_admin_players.html', title="Admin - Manage Players", highlightActive='players', 
+                           entries=playerEntries)
+
+@admin.route('/admin/_admin_player_info')
+# Get all the admin editable details about a player from the database and return as JSON
+def admin_player_info():
+    pid = request.args.get('pid', 0, type=int)
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    SQL = "select pid, nick, name, phone, email, location, ifpanumber, pinside, notes, status, active from player where pid=%s;"
+    data = (pid, )
+    dbcur.execute(SQL, data)
+    entries = dbcur.fetchall()
+    dbcur.close()
+    conn.close()
+
+    # Make API call to IFPA to refresh stored player info
+
+    # Parse out results and compile into JSON
+    for entry in entries:
+        pid = entry['pid']
+        nick = entry['nick']
+        name = entry['name']
+        phone = entry['phone']
+        email = entry['email']
+        location = entry['location']
+        ifpanumber = entry['ifpanumber']
+        pinside = entry['pinside']
+        notes = entry['notes']
+        status = entry['status']
+        active = entry['active']
+
+    return jsonify(pid=pid, nick=nick, name=name, phone=phone, email=email, location=location, ifpanumber=ifpanumber,
+                   pinside=pinside, notes=notes, status=status, active=active)
 
 @admin.route('/admin/locations')
 def show_admin_locations():
