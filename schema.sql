@@ -6,11 +6,15 @@ create table player (
   email varchar(255),
   phone varchar(25),
   location varchar(255),
-  ifpaNumber integer,
+  ifpanumber integer,
   pinside varchar(30),
   notes text,
   status integer,
-  active boolean not null
+  active boolean not null,
+  currentrank integer,
+  currentwpprvalue double precision,
+  bestfinish integer,
+  activeevents integer
 );
 
 drop table if exists game;

@@ -33,6 +33,7 @@ NGINX Logs: /var/log/nginx/
 	(venv)$ easy_install psycopg2
 	(venv)$ easy_install Flask-OpenID
 	(venv)$ easy_install sqlalchemy
+	(venv)$ easy_install requests
 
 3.  Configure uWSGI
 

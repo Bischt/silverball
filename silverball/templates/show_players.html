@@ -26,6 +26,21 @@ function rp(pid) {
 			ifpa = data.ifpanumber;
 		}
 
+		// Initialize fields to prevent ghosting of previous inputs
+		                $("#rendered_player_nick").text(initials);
+                $("#rendered_player_ifpa").text("");
+                $("#rendered_player_ifpa").attr("href", 'https://www.ifpapinball.com/player.php?p='+ifpa);
+                $("#rendered_player_phone").text("");
+                $("#rendered_player_location").text("");
+                $("#rendered_player_pinside").attr("href", 'http://pinside.com/pinball/community/pinsiders/');
+                $("#rendered_player_notes").text("");
+                $("#rendered_player_ifpastatus").text("");
+                $("#rendered_player_ifpacurrentrank").text("");
+                $("#rendered_player_ifpacurrentwpprvalue").text("");
+                $("#rendered_player_ifpabestfinish").text("");
+                $("#rendered_player_ifpaactiveevents").text("");
+
+
 		$("#rendered_player_nick").text(initials);
 		$("#rendered_player_ifpa").text(ifpa);
 		$("#rendered_player_ifpa").attr("href", 'https://www.ifpapinball.com/player.php?p='+ifpa);
@@ -33,6 +48,14 @@ function rp(pid) {
 		$("#rendered_player_location").text(data.location);
 		$("#rendered_player_pinside").attr("href", 'http://pinside.com/pinball/community/pinsiders/'+data.pinside);
 		$("#rendered_player_notes").text(data.notes);
+
+		if (data.ifpanumber != null) {
+			$("#rendered_player_ifpastatus").text(data.statuscode);
+			$("#rendered_player_ifpacurrentrank").text(data.currentrank);
+                	$("#rendered_player_ifpacurrentwpprvalue").text(data.currentwpprvalue);
+                	$("#rendered_player_ifpabestfinish").text(data.bestfinish);
+                	$("#rendered_player_ifpaactiveevents").text(data.activeevents);
+		}
       	});
 }
 </script>
@@ -77,11 +100,16 @@ function rp(pid) {
         <h1><span id="rendered_player_name"></span><span id="rendered_player_nick"></span></h1>
         <p>Any content could go in here.</p>
         <div>
-	<b>IFPA #: </b><a href="" id="rendered_player_ifpa"></span><span id="rendered_player_ifpa"></span></a>
-        <b>Phone: </b><span id="rendered_player_phone"></span>
-        <b>Location: </b><span id="rendered_player_location"></span>
-        <b>Pinside: </b><a href="" id="rendered_player_pinside">Pinside</a>
-        <b>Notes: </b><span id="rendered_player_notes"></span>
+	<p><b>IFPA #: </b><a href="" id="rendered_player_ifpa"></span><span id="rendered_player_ifpa"></span></a></p>
+        <p><b>Phone: </b><span id="rendered_player_phone"></span></p>
+        <p><b>Location: </b><span id="rendered_player_location"></span></p>
+        <p><b>Pinside: </b><a href="" id="rendered_player_pinside">Pinside</a></p>
+        <p><b>Notes: </b><span id="rendered_player_notes"></span></p>
+ 	<p><b>IFPA Status Code: </b><span id="rendered_player_ifpastatus"></span></p>
+	<p><b>IFPA Current Rank: </b><span id="rendered_player_ifpacurrentrank"></span></p>
+        <p><b>IFPA Current WPPR Value: </b><span id="rendered_player_ifpacurrentwpprvalue"></span></p>
+	<p><b>IFPA Best Finish: </b><span id="rendered_player_ifpabestfinish"></span></p>
+	<p><b>IFPA Total Active Events: </b><span id="rendered_player_ifpaactiveevents"></span></p>
         </div>
         <a class="close-reveal-modal">&#215;</a>
 </div>

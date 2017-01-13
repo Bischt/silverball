@@ -1,5 +1,7 @@
+import json
 import psycopg2
 import psycopg2.extras
+import requests
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, current_app
 from flask_openid import OpenID
 
@@ -119,14 +121,10 @@ def single_player_profile():
     pid = request.args.get('pid', 0, type=int)
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, phone, location, ifpanumber, pinside, notes, status, active from player where active=True and pid=%s;"
+    SQL = "select pid, nick, name, phone, location, ifpanumber, pinside, notes, status, active, currentrank, currentwpprvalue, bestfinish, activeevents from player where active=True and pid=%s;"
     data = (pid, )
     dbcur.execute(SQL, data)
     entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
-
-    # Make API call to IFPA to refresh stored player info
 
     # Parse out results and compile into JSON
     for entry in entries:
@@ -140,9 +138,36 @@ def single_player_profile():
         notes = entry['notes']
         status = entry['status']
         active = entry['active']
+        currentRank = entry['currentrank']
+        currentWPPRValue = entry['currentwpprvalue']
+        bestFinish = entry['bestfinish']
+        activeEvents = entry ['activeevents']
+
+    # Make API call to IFPA to refresh stored player info if there is an ifpa number associated with the player
+    statusCode = ""
+
+    if ifpanumber != "":
+        response = get_ifpa_player(ifpanumber)
+        statusCode = response.status_code
+
+        # If status code 200 update database with new cached data
+	if statusCode == 200:
+            ifpadata = json.loads(response.content)
+            currentRank = ifpadata["player_stats"]["current_wppr_rank"]
+            currentWPPRValue = ifpadata["player_stats"]["current_wppr_value"]
+            bestFinish = ifpadata["player_stats"]["best_finish"]
+            activeEvents = ifpadata["player_stats"]["total_active_events"]
+
+            dbcur.execute("update player set currentrank=%s, currentwpprvalue=%s, bestfinish=%s, activeevents=%s  where pid=%s", (
+                         currentRank, currentWPPRValue, bestFinish, activeEvents, pid))
+            conn.commit()
+
+    dbcur.close()
+    conn.close()
 
     return jsonify(pid=pid, nick=nick, name=name, ifpanumber=ifpanumber, phone=phone, location=location, 
-                   pinside=pinside, notes=notes, status=status, active=active)
+                   pinside=pinside, notes=notes, status=status, active=active, statuscode=statusCode, currentrank=currentRank,
+                   currentwpprvalue=currentWPPRValue, bestfinish=bestFinish, activeevents=activeEvents)
 
 @player.route('/standings')
 def show_standings():
@@ -201,3 +226,14 @@ def games_for_location():
     conn.close()
 
     return jsonify(games=entries)
+
+# Will query the IFPA api and return a json blob about a particular user
+def get_ifpa_player(playerNum):
+    ifpa_api_url = "https://api.ifpapinball.com/v1/player/%s?api_key=%s" % (playerNum, current_app.config["IFPA_API_KEY"])
+
+    response = requests.get(ifpa_api_url)
+
+    # response.content = JSON blob
+    # response.status_code = Status code
+
+    return response

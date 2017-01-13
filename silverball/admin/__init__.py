@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+import requests
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, current_app
 from flask_openid import OpenID
 
