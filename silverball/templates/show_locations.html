@@ -51,42 +51,6 @@ function sg(lid) {
 	});
 }
 
-// Update location status
-function setLocationActive(lid, active) {
-	$.getJSON($SCRIPT_ROOT + '/admin/_update_location_status', {
-	lid:lid,
-	active:active
-	}, function(data) {
-
-	});
-}
-
-// Will render window to edit location
-$(document).ready(function() {
-	$('#eloc').click(function(e) {
-		e.preventDefault();
-		$('#editlocation').reveal({
-			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-			animationspeed: 300,                       //how fast animtions are
-			closeonbackgroundclick: true,              //if you click background will modal close?
-			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-		});
-	});
-});
-
-// Will render window to add new location
-$(document).ready(function() {
-	$('#aloc').click(function(e) {
-		e.preventDefault();
-		$('#addlocation').reveal({
-			animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-			animationspeed: 300,                       //how fast animtions are
-			closeonbackgroundclick: true,              //if you click background will modal close?
-			dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
-		});
-	});
-});
-
 //-->
 </script>
 
@@ -105,7 +69,7 @@ List of places to play
 	<tbody>
 	{% for entry in entries %}
 	<tr>
-		<td><a href="#" data-reveal-id="myModal" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }}); sg({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
+		<td><a href="#" data-reveal-id="viewlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }}); sg({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
 		<td>{{ entry['address'] }}</td>
 		<td></td>
 	</tr>
@@ -115,12 +79,12 @@ List of places to play
 	</tbody>
 </table>
 
-<!--Popup for editing location/adding games to location-->
-<div id="editlocation" class="reveal-modal">
+<!--Popup for viewing location details and the games/conditions at that location-->
+<div id="viewlocation" class="reveal-modal">
 	<h1><span id="rendered_location_name"></span></h1>
 
 	<div>
-	<p>Edit location.  Add/edit games at a location</p>
+	<p>View location.</p>
 
 	<p><b>Address: </b><span id="rendered_location_address"></span></p>
 	<p><b>Notes: </b><span id="rendered_location_notes"></span></p>
@@ -137,8 +101,6 @@ List of places to play
 		<tbody id="gamelistbody"></tbody>
 	</table>
 	<div style="position:absolute; margin-top:15px;">
-	<p><a href="#">Add Game</a></p>
-	<p><button name="deletelocation">Delete This Location</button></p>
 	</div>
 	</div>
 	<a class="close-reveal-modal">&#215;</a>
