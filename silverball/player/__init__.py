@@ -185,7 +185,7 @@ def show_scores():
 def show_locations():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute("select lid, name, address, notes, active from location where active=True;")
+    dbcur.execute("select location.lid, location.name, location.address, location.notes, count(*) as gamecount from location inner join game on location.lid=game.lid where location.active=true and game.active=true group by location.lid;")
     entries = dbcur.fetchall()
     dbcur.close()
     conn.close()

@@ -63,7 +63,7 @@ List of places to play
 		<tr>
 			<th>Name</th>
 			<th>Address</th>
-			<th>Games</th>
+			<th>Games Available</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -71,7 +71,7 @@ List of places to play
 	<tr>
 		<td><a href="#" data-reveal-id="viewlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }}); sg({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
 		<td>{{ entry['address'] }}</td>
-		<td></td>
+		<td>{{ entry['gamecount'] }}</td>
 	</tr>
 	{% else %}
 		<tr><td>No entries.</td><td></td></tr>

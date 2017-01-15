@@ -21,6 +21,7 @@ drop table if exists game;
 create table game (
   gid SERIAL primary key not null,
   lid integer,
+  mid integer,
   name varchar(255) not null,
   condition text,
   notes text,
