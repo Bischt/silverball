@@ -218,7 +218,7 @@ def games_for_location():
     lid = request.args.get('lid', 0, type=int)
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select gid, name, condition, notes, active from game where lid=%s"
+    SQL = "select game.gid, game.mid, game.condition, game.notes, machines.name, machines.abbr, machines.manufacturer, machines.manDate, machines.players, machines.gameType, machines.theme, machines.ipdbURL from game inner join machines on game.mid=machines.mid where game.active = true and game.lid = %s;"
     data = (lid,)
     dbcur.execute(SQL, data)
     entries = dbcur.fetchall()

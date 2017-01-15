@@ -41,10 +41,10 @@ function sg(lid) {
 			// Loop through all details for particular game
 			var game = data.games[i];
 
-			gameoutput = gameoutput + '<td class="sorting_1">' + game[1] + "</td>";
+			gameoutput = gameoutput + '<td class="sorting_1"><a href="' + game[11] + '">' + game[4] + "</a></td>";
 			gameoutput = gameoutput + '<td class="">' + game[2] + "</td>";
 			gameoutput = gameoutput + '<td class="">' + game[3] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[4] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game[9] + "</td>";
 			gameoutput = gameoutput + "</tr>";
 		}
 		$("#gamelistbody").html(gameoutput);
@@ -95,7 +95,7 @@ List of places to play
 			<th>Name</th>
 			<th>Condition</th>
 			<th>Notes</th>
-			<th>Available for League</th>
+			<th>Type</th>
 		</tr>
 		</thead>
 		<tbody id="gamelistbody"></tbody>
