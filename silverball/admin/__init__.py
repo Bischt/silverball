@@ -155,7 +155,65 @@ def show_admin_content():
 
 @admin.route('/admin/config')
 def show_admin_config():
-    return render_template('show_admin_config.html', title="Admin - Configure League", highlightActive='configure')
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # Get the current league season (whether started or not)
+    dbcur.execute("select sid, timestamp, seasonLength, numToDrop, numOfRounds, gamesPerRound, scoring, seeding, playerOrder, machineDrawing, dues, running, historical, active from season where historical=false order by timestamp limit 1")
+    currentSeason = dbcur.fetchall()
+
+    sid = ""
+    length = ""
+    dropweeks = ""
+    numrounds = ""
+    numgames = ""
+    scoring = ""
+    seeding = ""
+    order = ""
+    drawing = ""
+    dues = ""
+    running = "";
+
+    for entry in currentSeason:
+        sid = entry['sid']
+        length = entry['seasonLength']
+        dropweeks = entry['numToDrop']
+        numrounds = entry['numOfRounds']
+        numgames = entry['gamesPerRound']
+        scoring = entry['scoring']
+        seeding = entry['seeding']
+        order = entry['playerOrder']
+        drawing = entry['machineDrawing']
+        dues = entry['dues']
+        running = entry['running']
+
+    # Get historical league seasons
+    dbcur.execute("select sid, timestamp, seasonLength, numToDrop, numOfRounds, gamesPerRound, scoring, seeding, playerOrder, machineDrawing, dues, running, historical, active from season where historical=true order by timestamp")
+
+    historicalSeasons = dbcur.fetchall()
+
+    dbcur.close()
+    conn.close()
+    return render_template('show_admin_config.html', title="Admin - Configure League", highlightActive='configure', cursid=sid, curlength=length, curdrop=dropweeks, currounds=numrounds, curgames=numgames, curscoring=scoring, curseeding=seeding, curorder=order, curdrawing=drawing, curdues=dues, currunning=running, historicalseason=historicalSeasons)
+
+@admin.route('/admin/_update_season_hidden')
+# Update the season activity.  Inactive seasons are not available for view.
+def update_season_hidden():
+    sid = request.args.get('sid', 0, type=int)
+    active = request.args.get('active', 0, type=int)
+    if active == 1:
+        activevalue = True
+    elif active == 0:
+        activevalue = False
+    else:
+        activevalue = False
+
+    conn = connect_db()
+    dbcur = conn.cursor()
+    dbcur.execute("update season set active=%s where sid=%s", (activevalue, sid))
+    conn.commit()
+    dbcur.close()
+    conn.close()
+    return jsonify(ret=0)
 
 @admin.route('/admin/data')
 def show_admin_data():

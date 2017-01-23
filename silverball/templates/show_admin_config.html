@@ -6,8 +6,114 @@
 
 {% block body %}
 
+<script type="text/javascript">
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+// Update whether or not the season is hidden from view for players to see
+function setHidden(sid, active) {
+        $.getJSON($SCRIPT_ROOT + '/admin/_update_season_hidden', {
+        sid: sid,
+        active: active
+        }, function(data) {
+
+        });
+}
+
+// If league season has started, display redbar message
+
+
+</script>
+
 <h2>Configure League</h2>
 
+Set configurations for the league season.  Will populate values from previous season.  You can make updates up until the 
+point the league season is started.  At that point changes cannot be made until a new season is to be started.
 
+<h3>Season Configuration</h3>
+
+<p><b>Length of season: </b><input type="text" name="cfg-seasonLength" value="{{ curlength }}" {% if currunning %}disabled {% endif %}/></p>
+<p><span id="lbl-seasonLength">How many meetings per league season</span></p>
+<p><b>Number of meetings to drop (i.e. Drop lowest 2): </b><input type="text" name="cfg-dropWeeks" value="{{ curdrop }}" {% if currunning %}disabled {% endif %}/></p>
+<p><span id="lbl-dropWeeks">Should any number of weeks be dropped?  IF you would like to drop the lowest 2 weeks, enter 2</span></p>
+<p><b>Number of rounds played per meeting: </b><input type="text" name="cfg-numRounds" value="{{ currounds }}" {% if currunning %}disabled {% endif %}/></p>
+<p><span id="lbl-numRounds">How many rounds will be played?  If 4 is picked, each group will play 4 rounds.</span></p>
+<p><b>Number of games played per round: </b><input type="text" name="cfg-numGames" value="{{ curgames }}" {% if currunning %}disabled {% endif %}/></p>
+<p><span id="lbl-gamesPlayed">How many games per round?  If 3 then each round would be a best of 3, if 1 then best of 1, etc.</span></p>
+<p><b>Scoring: </b>
+<select name="cfg-scoring"{% if currunning %} disabled{% endif %}>
+    <option value="bapa"{% if curscoring == "bapa"%} selected{% endif %}>BAPA (8/6/4/2 - 8/5/2)</option>
+    <option value="ifpa"{% if curscoring == "ifpa"%} selected{% endif %}>IFPA (7/5/3/1 - 7/4/1)</option>)
+</select>
+<p><span id="lbl-scoring"><b>BAPA (8/6/4/2 - 8/5/2)</b> - Four player groups will receive point values of 8, 6, 4, 2 and three player groups will receive 8, 5, 2.<br /><b>IFPA (7/5/3/1 - 7/4/1)</b> - Four player groups will receive point values of 7, 5, 3, 1 and three player groups will receive 7, 4, 1.</span></p>
+</p>
+
+<p><b>Seeding (for rolling groups): </b>
+<select name="cfg-seeding"{% if currunning %} disabled{% endif %}>
+    <option value="bapa"{% if curseeding == "bapa"%} selected{% endif %}>BAPA</option>
+    <option value="ifpa"{% if curseeding == "ifpa"%} selected{% endif %}>IFPA</option>
+</select>
+</p>
+<p><span id="lbl-seeding"><b>BAPA</b> - The first meeting will be seeded based on IFPA rank and each meeting thereafter will be seeded based on the previous week's score.<br /><b>IFPA</b> - Every meeting will seed based off IFPA rank.</span></p>
+
+<p><b>Play Order: </b></p>
+<select name="cfg-order"{% if currunning %} disabled{% endif %}>
+    <option value="balanced"{% if curorder == "balanced" %} selected{% endif %}>Balanced</option>
+    <option value="random"{% if curorder == "random" %} selected{% endif %}>Random</option>
+    <option value="topseed"{% if curorder == "topseed" %} selected{% endif %}>Top Seed</option>
+    <option value="previous"{% if curorder == "previous" %} selected{% endif %}>Previous</option>
+</select>
+<p><span id="lbl-order"><b>Balanced</b> - Each player in the group should receive fairly equal play order.  If 4 games are played, each player should play as player 1, 2, 3, and 4 once.<br /><b>Random</b> - Every round will receive a randomly determined play order<br /><b>Top Seed</b> - Every round will be seeded based on the results of the previous round<br /><b>Previous</b> - Each round will be seeded based off the previous round's results</span></p>
+
+<p><b>Machine Drawing: </b></p>
+<select name="cfg-drawing"{% if currunning %} disabled{% endif %}>
+    <option value="effacatious"{% if curdrawing == "effacatious" %} selected{% endif %}>Effacatious</option>
+    <option value="manual"{% if curdrawing == "manual" %} selected{% endif %}>Manual</option>
+    <option value="random"{% if curdrawing == "random" %} selected{% endif %}>Random</option>
+    <option value="bank"{% if curdrawing == "bank" %} selected{% endif %}>Set Bank</option>
+</select>
+<p><span id="lbl-drawing"><b>Effacatious</b> - Quickest way to finish.  Groups will be assigned open games only.  If no open games the group will remain in flight until a game becomes available.<br /><b>Manual</b> - Groups will be assigned to machines manually be a league admin.<br /><b>Random</b> - Groups will be assigned to random games with no reguard as to whether or not they are currently in use.<br /><b>Set bank</b> - League admin will define banks of machines and also assign that bank of machines to groups.  Those groups will only play on those banks.</span></p>
+
+<p><b>Dues/Season: </b><input type="text" name="cfg-dues" value="{{ curdues }}" {% if currunning %}disabled {% endif %} /></p>
+<p><span id="lbl-dues">How much money is it going to cost to play for the season?</span></p>
+<input type="hidden" name="cfg-sid" value="{{ cursid }}" />
+<p><input type="submit" value="Save/Update League Configuration" {% if currunning %}disabled {% endif %}/></p>
+
+<h3>Historical Leagues</h3>
+
+Table of previous league seasons.  Ability to toggle them active/inactive to allow players to view historical data.
+
+<table cellpadding=0 cellspacing=0 border=0 class=display id=showdatatable width=100%>
+	<thead>
+		<tr>
+			<th>Created</th>
+			<th>Season</th>
+			<th>Meeting</th>
+			<th>Scoring</th>
+			<th>Machine Selection</th>
+			<th>Dues</th>
+			<th>Hidden</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for season in historicalseason %}
+		<tr>
+			<td>{{ season['timestamp'] }}</td>
+			<td>{{ season['seasonlength'] }}&nbsp;meeting(s)<br />{{ season['numtodrop'] }}&nbsp;lowest</td>
+			<td>{{ season['numofrounds'] }}&nbsp;round(s)<br />{{ season['gamesperround'] }}&nbsp;game/round(s)<br />{{ season['seeding'] }}&nbsp;Seeding</td>
+			<td>Scoring:&nbsp;{{ season['scoring'] }}<br />Play Order:&nbsp;{{ season['seeding'] }}</td>
+			<td>{{ season['machinedrawing'] }}</td>
+			<td>${{ season['dues'] }}</td>
+			<td>
+			<select name="ishidden-{{ season['sid'] }}" onchange="javascript:setHidden(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
+				<option value="true"{% if season['active'] == False %} selected{% endif %}>No</option>
+				<option value="false"{% if season['active'] == True %} selected{% endif %}>Yes</option>
+			</select>
+			</td>
+		</tr>
+	{% else %}
+	<tr><td>No entries.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+	{% endfor %}
+	</tbody>
+</table>
 
 {% endblock %}

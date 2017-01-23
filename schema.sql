@@ -52,6 +52,24 @@ create table machines (
   ipdbURL varchar(150)
 );
 
+drop table if exists season;
+create table season (
+  sid SERIAL primary key not null,
+  timestamp timestamp not null default CURRENT_TIMESTAMP,
+  seasonLength integer not null,
+  numToDrop integer not null,
+  numOfRounds integer not null,
+  gamesPerRound integer not null, 
+  scoring varchar(150) not null,
+  seeding varchar(150) not null,
+  playerOrder varchar(150) not null,
+  machineDrawing varchar(150) not null,
+  dues double precision default 0.00,
+  running boolean not null default False,
+  historical boolean not null default False,
+  active boolean not null default True
+);
+
 ---------------------------------------------------------
 -- Test tables for league scoring/team matching/voting --
 ---------------------------------------------------------
@@ -84,29 +102,4 @@ create table voting (
   pid integer,
   vote boolean
 );
-
--- Tables to hold historic data (lazy sharding)
---drop table if exists history;
---crate table history (
-
---);
-
---drop table if exists historic_scores;
---create table historic_scores (
-
---);
----------------------------------------------------------
----------------------------------------------------------
-
-
-insert into location (lid, name, address, notes, active) values (1, 'Russells house', '123 any street', 'Awesome place for a beer', True);
-insert into location (lid, name, address, notes, active) values (2, 'Pizza Depot', 'Use Apple Maps heh', 'OK', True);
-insert into location (lid, name, address, notes, active) values (3, 'Magic Pins', 'Springs Ave', 'Meh', False);
-
-insert into game (lid, name, condition, notes, active) values (1, 'TOM', 'Amazing', 'Still fun', True);
-insert into game (lid, name, condition, notes, active) values (1, 'TZ', 'Meh', 'Broken slingshots', True);
-insert into game (lid, name, condition, notes, active) values (2, 'AFM', 'OK', 'Getting shopped', False);
-insert into game (lid, name, condition, notes, active) values (2, 'Hurricane', 'Best Evar', 'Sweet', True);
-insert into game (lid, name, condition, notes, active) values (3, 'RFM', 'OK', 'OK', True);
-insert into game (lid, name, condition, notes, active) values (3, 'TAF', 'horrible', 'random resets', False);
 
