@@ -182,7 +182,7 @@ def show_admin_config():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     # Get the current league season (whether started or not)
-    dbcur.execute("select sid, timestamp, seasonLength, numToDrop, numOfRounds, gamesPerRound, scoring, seeding, playerOrder, machineDrawing, dues, running, historical, active from season where historical=false order by timestamp limit 1")
+    dbcur.execute("select sid, timestamp, seasonlength, numtodrop, numofrounds, gamesperround, scoring, seeding, playerorder, machinedrawing, dues, running, historical, active from season where historical=false order by timestamp limit 1")
     currentSeason = dbcur.fetchall()
 
     sid = ""
@@ -199,14 +199,14 @@ def show_admin_config():
 
     for entry in currentSeason:
         sid = entry['sid']
-        length = entry['seasonLength']
-        dropweeks = entry['numToDrop']
-        numrounds = entry['numOfRounds']
-        numgames = entry['gamesPerRound']
+        length = entry['seasonlength']
+        dropweeks = entry['numtodrop']
+        numrounds = entry['numofrounds']
+        numgames = entry['gamesperround']
         scoring = entry['scoring']
         seeding = entry['seeding']
-        order = entry['playerOrder']
-        drawing = entry['machineDrawing']
+        order = entry['playerorder']
+        drawing = entry['machinedrawing']
         dues = entry['dues']
         running = entry['running']
 
@@ -214,9 +214,6 @@ def show_admin_config():
     dbcur.execute("select sid, timestamp, seasonLength, numToDrop, numOfRounds, gamesPerRound, scoring, seeding, playerOrder, machineDrawing, dues, running, historical, active from season where historical=true order by timestamp")
 
     historicalSeasons = dbcur.fetchall()
-
-    dbcur.close()
-    conn.close()
 
     form = CreateSeasonForm(seeding=seeding, scoring=scoring, playorder=order, drawing=drawing)
 
@@ -232,12 +229,42 @@ def show_admin_config():
 
     # When the form is submitted, process it.
     if request.method == 'POST':
+        # If all looks good update the database (if sid included) or insert new record
         if form.validate_on_submit():
-            flash("Season Details Saved!")
 
-            # If the form fails validation, provide reasonable output via flash
+            sid = request.form['sid']
+            seasonLength = request.form['seasonLength']
+            dropWeeks = request.form['dropWeeks']
+            numRounds = request.form['numRounds']
+            numGames = request.form['numGames']
+            dues = request.form['dues']
+            seeding = request.form['seeding']
+            scoring = request.form['scoring']
+            playorder = request.form['playorder']
+            drawing = request.form['drawing']
 
-            # If all looks good update the database (if sid included) or insert new record
+            # If season exists (and is not started)
+            if sid == "" and not running:
+
+                dbcur.execute("insert into season (seasonlength, numtodrop, numofrounds, gamesperround, scoring, seeding, playerorder, machinedrawing, dues) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (seasonLength, dropWeeks, numRounds, numGames, scoring, seeding, playorder, drawing, dues))
+                conn.commit()
+
+                flash("New season added!")
+            # Update existing season record (if not started)
+            elif sid > 0 and not running:
+
+                dbcur = conn.cursor()
+                dbcur.execute("update season set seasonlength=%s, numtodrop=%s, numofrounds=%s, gamesperround=%s, scoring=%s, seeding=%s, playerorder=%s, machinedrawing=%s, dues=%s where sid=%s", (seasonLength, dropWeeks, numRounds, numGames, scoring, seeding, playorder, drawing, dues, sid))
+                conn.commit()
+
+                flash("Season updated!")
+
+            # If the season has started
+            else:
+                flash("A season that is currently running canot be modified!")
+
+            dbcur.close()
+            conn.close()
 
             return render_template('show_admin_config.html', 
                    title="Admin - Configure League", 
@@ -246,12 +273,16 @@ def show_admin_config():
                    cursid=sid, 
                    currunning=running, 
                    historicalseason=historicalSeasons)
+
+        # If the form fails validation, provide reasonable output via flash
         else:
 
             for field, errors in form.errors.items():
                 for error in errors:
                     flash(u"Error in the %s field - %s" % (getattr(form, field).label.text, error))
             
+            dbcur.close()
+            conn.close()
 
             return render_template('show_admin_config.html',
                    title="Admin - Configure League",
