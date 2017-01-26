@@ -66,6 +66,9 @@ point the league season is started.  At that point changes cannot be made until 
 {% endif %}
 </p>
 <p><span id="lbl-gamesPlayed">How many games per round?  If 3 then each round would be a best of 3, if 1 then best of 1, etc.</span></p>
+
+<h3>Scoring Configuration</h3>
+
 <p><b>Scoring: </b>
 {% if currunning == 'true' %}
 {{ form.scoring(disabled=currunning) }}
@@ -99,6 +102,8 @@ point the league season is started.  At that point changes cannot be made until 
 {{ form.drawing }}
 {% endif %}
 <p><span id="lbl-drawing"><b>Effacatious</b> - Quickest way to finish.  Groups will be assigned open games only.  If no open games the group will remain in flight until a game becomes available.<br /><b>Manual</b> - Groups will be assigned to machines manually be a league admin.<br /><b>Random</b> - Groups will be assigned to random games with no reguard as to whether or not they are currently in use.<br /><b>Set bank</b> - League admin will define banks of machines and also assign that bank of machines to groups.  Those groups will only play on those banks.</span></p>
+
+<h3>Odds and Ends</h3>
 
 <p><b>Dues/Season: </b>
 {% if currunning == 'true' %}
