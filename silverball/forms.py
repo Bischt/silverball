@@ -1,30 +1,52 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, IntegerField, DecimalField, HiddenField, TextField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NumberRange, Optional, AnyOf
 
 class CreateSeasonForm(FlaskForm):
 
-    seasonLength = IntegerField('seasonLength')
+    seasonLength = IntegerField('Season Length', 
+                                validators=[NumberRange(
+                                    min=1, 
+                                    message="Must enter a non zero season length")
+                                ])
 
-    dropWeeks = IntegerField('dropWeeks')
+    dropWeeks = IntegerField('Weeks To Drop', 
+                             validators=[NumberRange(
+                                 min=0, 
+                                 message="Must enter the number of weeks to drop")
+                             ])
 
-    numRounds = IntegerField('numRounds')
+    numRounds = IntegerField('Number of Rounds', 
+                             validators=[NumberRange(
+                                 min=1, 
+                                 message="Must enter the number of rounds to play")
+                             ])
 
-    numGames = IntegerField('numGames')
+    numGames = IntegerField('Games Per Round', 
+                            validators=[NumberRange(
+                                min=1, 
+                                message="Must enter the number of games played per round")
+                            ])
 
-    dues = DecimalField('dues')
+    dues = DecimalField('Dues', 
+                        validators=[NumberRange(
+                            min=0, 
+                            message="Must enter the amount of league dues to be collected")
+                        ])
 
-    sid = HiddenField('sid')
+    sid = HiddenField('sid', validators=[Optional()])
 
     seeding = SelectField(
         'Seeding',
-        choices=[('bapa', 'BAPA'), ('ifpa', 'IFPA')]
+        choices=[('bapa', 'BAPA'), ('ifpa', 'IFPA')],
+        validators=[AnyOf(values=['bapa', 'ifpa'], message="Must select a seeding option")]
     )
 
     scoring = SelectField(
         'Scoring',
         choices=[('bapa', 'BAPA (8/6/4/2 - 8/5/2)'), 
-                 ('ifpa', 'IFPA (7/5/3/1 - 7/4/1)')]
+                 ('ifpa', 'IFPA (7/5/3/1 - 7/4/1)')],
+        validators=[AnyOf(values=['bapa', 'ifpa'], message="Must select a scoring option")]
     )
 
     playorder = SelectField(
@@ -32,7 +54,12 @@ class CreateSeasonForm(FlaskForm):
         choices=[('balanced', 'Balanced'), 
                  ('random', 'Random'), 
                  ('topseed', 'Top Seed'), 
-                 ('previous', 'Previous')]
+                 ('previous', 'Previous')],
+        validators=[AnyOf(values=['balanced', 
+                                  'random', 
+                                  'topseed', 
+                                  'previous'], 
+                          message="Must select the play order")]
     )
 
     drawing = SelectField(
@@ -40,6 +67,11 @@ class CreateSeasonForm(FlaskForm):
         choices=[('effacatious', 'Effacatious'), 
                 ('manual', 'Manual'), 
                 ('random', 'Random'), 
-                ('bank', 'Bank')]
+                ('bank', 'Bank')],
+        validators=[AnyOf(values=['effacatious', 
+                                  'manual', 
+                                  'random', 
+                                  'bank'], 
+                          message="Must select machine drawing")]
     )
 

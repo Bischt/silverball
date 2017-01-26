@@ -230,15 +230,36 @@ def show_admin_config():
         form.dues.data = Decimal(dues)
     form.sid.data = sid
 
-    if form.validate_on_submit():
-        flash("Season Details Saved!")
-        return render_template('show_admin_config.html', 
-               title="Admin - Configure League", 
-               highlightActive='configure', 
-               form=form, 
-               cursid=sid, 
-               currunning=running, 
-               historicalseason=historicalSeasons)
+    # When the form is submitted, process it.
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            flash("Season Details Saved!")
+
+            # If the form fails validation, provide reasonable output via flash
+
+            # If all looks good update the database (if sid included) or insert new record
+
+            return render_template('show_admin_config.html', 
+                   title="Admin - Configure League", 
+                   highlightActive='configure', 
+                   form=form, 
+                   cursid=sid, 
+                   currunning=running, 
+                   historicalseason=historicalSeasons)
+        else:
+
+            for field, errors in form.errors.items():
+                for error in errors:
+                    flash(u"Error in the %s field - %s" % (getattr(form, field).label.text, error))
+            
+
+            return render_template('show_admin_config.html',
+                   title="Admin - Configure League",
+                   highlightActive='configure',
+                   form=form,
+                   cursid=sid,
+                   currunning=running,
+                   historicalseason=historicalSeasons)
 
 
     return render_template('show_admin_config.html', 
