@@ -41,10 +41,10 @@ function showGames(lid) {
 			// Loop through all details for particular game
 			var game = data.games[i];
 
-			gameoutput = gameoutput + '<td class="sorting_1">' + game[1] + "</td>";
+			gameoutput = gameoutput + '<td class="sorting_1"><a href="' + game[11] + '">' + game[4] + "</td>";
 			gameoutput = gameoutput + '<td class="">' + game[2] + "</td>";
 			gameoutput = gameoutput + '<td class="">' + game[3] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[4] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game[9] + "</td>";
 			gameoutput = gameoutput + "</tr>";
 		}
 		$("#gamelistbody").html(gameoutput);
