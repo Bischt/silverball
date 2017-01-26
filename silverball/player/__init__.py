@@ -165,9 +165,21 @@ def single_player_profile():
     dbcur.close()
     conn.close()
 
-    return jsonify(pid=pid, nick=nick, name=name, ifpanumber=ifpanumber, phone=phone, location=location, 
-                   pinside=pinside, notes=notes, status=status, active=active, statuscode=statusCode, currentrank=currentRank,
-                   currentwpprvalue=currentWPPRValue, bestfinish=bestFinish, activeevents=activeEvents)
+    return jsonify(pid=pid, 
+                   nick=nick, 
+                   name=name, 
+                   ifpanumber=ifpanumber, 
+                   phone=phone, 
+                   location=location, 
+                   pinside=pinside, 
+                   notes=notes, 
+                   status=status, 
+                   active=active, 
+                   statuscode=statusCode, 
+                   currentrank=currentRank,
+                   currentwpprvalue=currentWPPRValue, 
+                   bestfinish=bestFinish, 
+                   activeevents=activeEvents)
 
 @player.route('/standings')
 def show_standings():
@@ -189,7 +201,10 @@ def show_locations():
     entries = dbcur.fetchall()
     dbcur.close()
     conn.close()
-    return render_template('show_locations.html', title='Locations', highlightActive='locations', entries=entries)
+    return render_template('show_locations.html', 
+           title='Locations', 
+           highlightActive='locations', 
+           entries=entries)
 
 @player.route('/_single_location_info')
 def single_location_info():

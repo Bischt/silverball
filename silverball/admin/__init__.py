@@ -1,16 +1,24 @@
+from decimal import Decimal
 import psycopg2
 import psycopg2.extras
 import requests
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, current_app
 from flask_openid import OpenID
+from flask_wtf import FlaskForm
 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from silverball.forms import CreateSeasonForm
+
 app=Flask(__name__)
 
-admin = Blueprint('admin', __name__, static_url_path='/admin', static_folder='../static', template_folder='../templates')
+admin = Blueprint('admin', 
+                  __name__, 
+                  static_url_path='/admin', 
+                  static_folder='../static', 
+                  template_folder='../templates')
 
 # Connect to database
 def connect_db():
@@ -36,8 +44,11 @@ def show_admin():
     locations = dbcur.fetchall()
     dbcur.close()
     conn.close()
-    return render_template('show_admin.html', title="Admin - Run League", highlightActive='runleague', 
-                           entries=entries, locations=locations)
+    return render_template('show_admin.html', 
+           title="Admin - Run League", 
+           highlightActive='runleague', 
+           entries=entries, 
+           locations=locations)
 
 @admin.route('/admin/players')
 def show_admin_players():
@@ -47,8 +58,10 @@ def show_admin_players():
     playerEntries = dbcur.fetchall()
     dbcur.close()
     conn.close()
-    return render_template('show_admin_players.html', title="Admin - Manage Players", highlightActive='players', 
-                           entries=playerEntries)
+    return render_template('show_admin_players.html', 
+           title="Admin - Manage Players", 
+           highlightActive='players', 
+           entries=playerEntries)
 
 @admin.route('/admin/_admin_player_info')
 # Get all the admin editable details about a player from the database and return as JSON
@@ -79,8 +92,17 @@ def admin_player_info():
         status = entry['status']
         active = entry['active']
 
-    return jsonify(pid=pid, nick=nick, name=name, phone=phone, email=email, location=location, ifpanumber=ifpanumber,
-                   pinside=pinside, notes=notes, status=status, active=active)
+    return jsonify(pid=pid, 
+                   nick=nick, 
+                   name=name, 
+                   phone=phone, 
+                   email=email, 
+                   location=location, 
+                   ifpanumber=ifpanumber,
+                   pinside=pinside, 
+                   notes=notes, 
+                   status=status, 
+                   active=active)
 
 @admin.route('/admin/locations')
 def show_admin_locations():
@@ -90,8 +112,10 @@ def show_admin_locations():
     locations = dbcur.fetchall()
     dbcur.close()
     conn.close()
-    return render_template('show_admin_locations.html', title="Admin - Manage Locations", highlightActive='locations',
-                           locations=locations)
+    return render_template('show_admin_locations.html', 
+           title="Admin - Manage Locations", 
+           highlightActive='locations',
+           locations=locations)
 
 @admin.route('/admin/_admin_location_info')
 def admin_location_info():
@@ -153,7 +177,7 @@ def update_location_status():
 def show_admin_content():
     return render_template('show_admin_content.html', title="Admin - Edit Content", highlightActive='content')
 
-@admin.route('/admin/config')
+@admin.route('/admin/config', methods=['GET', 'POST'])
 def show_admin_config():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -193,7 +217,37 @@ def show_admin_config():
 
     dbcur.close()
     conn.close()
-    return render_template('show_admin_config.html', title="Admin - Configure League", highlightActive='configure', cursid=sid, curlength=length, curdrop=dropweeks, currounds=numrounds, curgames=numgames, curscoring=scoring, curseeding=seeding, curorder=order, curdrawing=drawing, curdues=dues, currunning=running, historicalseason=historicalSeasons)
+
+    form = CreateSeasonForm(seeding=seeding, scoring=scoring, playorder=order, drawing=drawing)
+
+    # Set values for form fields.  If season data already exists, but isn't started
+    # the current data will be made available for edit.
+    form.seasonLength.data = length
+    form.dropWeeks.data = dropweeks
+    form.numRounds.data = numrounds
+    form.numGames.data = numgames
+    if dues != "":
+        form.dues.data = Decimal(dues)
+    form.sid.data = sid
+
+    if form.validate_on_submit():
+        flash("Season Details Saved!")
+        return render_template('show_admin_config.html', 
+               title="Admin - Configure League", 
+               highlightActive='configure', 
+               form=form, 
+               cursid=sid, 
+               currunning=running, 
+               historicalseason=historicalSeasons)
+
+
+    return render_template('show_admin_config.html', 
+           title="Admin - Configure League", 
+           highlightActive='configure', 
+           form=form, 
+           cursid=sid, 
+           currunning=running, 
+           historicalseason=historicalSeasons)
 
 @admin.route('/admin/_update_season_hidden')
 # Update the season activity.  Inactive seasons are not available for view.

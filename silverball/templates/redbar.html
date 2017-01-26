@@ -1,12 +1,16 @@
-<div style="width:685px; margin:0 auto; margin-bottom:10px; display:none;">
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div style="width:685px; margin:0 auto; margin-bottom:10px;" id="redbar">
 
 <div id="redbarpanel" class="redbar">
 <span class="redroundtop">
         <span class="redcurve1"></span><span class="redcurve2"></span><span class="redcurve3"></span><span class="redcurve4"></span>
 </span>
-<div style="font-weight:bold;">
+<div style="font-weight:bold;" id="redbar-message">
+	{% for message in messages %}
+	<p>&nbsp;&nbsp;{{ message }}</p>
+	{% endfor %}
 
-&nbsp;&nbsp;ALERT MESSAGE
 
 </div>
 <span class="redroundbottom">
@@ -14,3 +18,5 @@
 </span>
 </div>
 </div>
+{% endif %}
+{% endwith %}

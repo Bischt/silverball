@@ -30,6 +30,7 @@ NGINX Logs: /var/log/nginx/
 	~$ . venv/bin/activate
 	
 	(venv)$ sudo pip install Flask
+	(venv)$ sudo pip install Flask-WTF
 	(venv)$ easy_install psycopg2
 	(venv)$ easy_install Flask-OpenID
 	(venv)$ easy_install sqlalchemy
