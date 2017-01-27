@@ -1,0 +1,92 @@
+/***********************************************
+ * TEXT STYLES
+ ***********************************************/
+.entryTitle
+{
+	font-family:verdana, arial, sans-serif;
+	font-size:16px;
+
+	color:#333;
+	border-bottom: 1px solid #999;
+	margin-bottom:5px;
+	margin-top:0px;
+}
+
+.entryText
+{
+	font-family:verdana, arial, sans-serif;
+	font-size:11px;
+	line-height:15px;
+}
+
+.smallText
+{
+	font-family:verdana, arial, sans-serif;
+	font-size:10px;
+}
+
+.paging
+{
+	font-family:verdana, arial, sans-serif;
+	font-size:11px;
+	line-height:15px;
+}
+
+.commentHeader
+{
+	font-family:verdana, arial, sans-serif;
+	font-size:9px;
+	letter-spacing:2px;
+}
+
+.commentText
+{
+	font-family:verdana, arial, sans-serif;
+	font-size:12px;
+}
+
+/*********************************************
+ * BLOG CONTENT ROUND CORNERS
+ *********************************************/
+.blogroundtop, .blogroundbottom
+{
+	display:block;
+	background-color:rgb(213,232,251);
+}
+
+.blogroundtop *, .blogroundbottom *
+{
+	display:block;
+	height:1px;
+	overflow:hidden;
+	background-color:rgb(159,198,237);
+}
+
+.blogcurve1
+{
+	margin:0 5px;
+}
+
+.blogcurve2
+{
+	margin:0 3px;
+}
+
+.blogcurve3
+{
+	margin:0 2px;
+}
+
+.blogcurve4
+{
+	margin:0 1px;
+}
+
+.blogcontent
+{
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-left:5px;
+	margin-right:5px;
+}
+
