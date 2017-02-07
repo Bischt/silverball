@@ -70,6 +70,15 @@ create table season (
   active boolean not null default True
 );
 
+drop table if exists config;
+create table config (
+  cid integer primary key not null,
+  leagueName varchar(255),
+  welcomeText text
+);
+insert into config (cid, leagueName, welcomeText) values (1, '', '');
+
+
 ---------------------------------------------------------
 -- Test tables for league scoring/team matching/voting --
 ---------------------------------------------------------

@@ -8,6 +8,21 @@
 
 <h2>Edit Content</h2>
 
+Add/edit content.  General league information settings as well as making/editing new blog posts.
 
+<h3>League Content</h3>
+
+<form action="" name="editConfig" method="POST">
+{{ form.hidden_tag() }}
+
+<p><b>League Name: </b>{{ form.leaguename }}</p>
+
+<p><b>Welcome Text: </b>{{ form.welcometext }}</p>
+
+<p><input type="submit" value="Save" /></p>
+
+</form>
+
+<h3>Blog Posts</h3>
 
 {% endblock %}

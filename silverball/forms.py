@@ -1,6 +1,30 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, IntegerField, DecimalField, HiddenField, TextField
+from wtforms import StringField, SelectField, IntegerField, DecimalField, HiddenField, TextField, BooleanField
 from wtforms.validators import DataRequired, NumberRange, Optional, AnyOf
+
+class ConfigurationForm(FlaskForm):
+
+    leaguename = StringField('League Name', validators=[Optional()])
+
+    welcometext = TextField('Welcome Text', validators=[Optional()])
+
+class AddLocationForm(FlaskForm):
+
+    name = StringField('Name')
+
+    address = StringField('Address')
+
+    addressPrivate = BooleanField('Private Address')
+
+    notes = TextField('Notes')
+
+    locType = SelectField(
+        'Location Type', 
+        choices=[(0, 'Public Location'), (1, 'Private Residence')], 
+        validators=[AnyOf(values=[0, 1], message="Must select a location type")]
+    )
+
+    active = BooleanField('Active')
 
 class CreateSeasonForm(FlaskForm):
 

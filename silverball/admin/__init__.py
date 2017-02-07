@@ -10,6 +10,8 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from silverball.forms import ConfigurationForm
+from silverball.forms import AddLocationForm
 from silverball.forms import CreateSeasonForm
 
 app=Flask(__name__)
@@ -173,9 +175,74 @@ def update_location_status():
     conn.close()
     return jsonify(ret=0)
 
-@admin.route('/admin/content')
+@admin.route('/admin/content', methods=['GET', 'POST'])
 def show_admin_content():
-    return render_template('show_admin_content.html', title="Admin - Edit Content", highlightActive='content')
+    conn = connect_db()
+    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    # Get the current configuration
+    dbcur.execute("select leagueName, welcomeText from config where cid=1")
+    currentConfig = dbcur.fetchall()
+
+    leaguename = ""
+    welcometext = ""
+
+    for entry in currentConfig:
+        leaguename = entry['leaguename']
+        welcometext = entry['welcometext']
+
+    form = ConfigurationForm(leaguename=leaguename, welcometext=welcometext)
+
+    form.leaguename.data = leaguename
+    form.welcometext.data = welcometext
+
+    # When the form is submitted, process it
+    if request.method == 'POST':
+        # If all looks good, update the database
+        if form.validate_on_submit():
+
+            leaguename = request.form['leaguename']
+            welcometext = request.form['welcometext']
+
+            dbcur.execute("update config set leagueName=%s, welcomeText=%s where cid=1", (leaguename, welcometext))
+            conn.commit()
+
+            flash("Content Saved!")
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_content.html',
+                   title="Admin - Edit Content",
+                   highlightActive='content',
+                   form=form,
+                   leaguename=leaguename,
+                   welcometext=welcometext)
+
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    flash(u"Error in the %s field - %s" % (getattr(form, field).label.text, error))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_content.html',
+                   title="Admin - Edit Content",
+                   highlightActive='content',
+                   form=form,
+                   leaguename=leaguename,
+                   welcometext=welcometext)
+
+    dbcur.close()
+    conn.close()
+
+    return render_template('show_admin_content.html', 
+           title="Admin - Edit Content", 
+           highlightActive='content', 
+           form=form,
+           leaguename=leaguename, 
+           welcometext=welcometext)
 
 @admin.route('/admin/config', methods=['GET', 'POST'])
 def show_admin_config():
@@ -195,7 +262,7 @@ def show_admin_config():
     order = ""
     drawing = ""
     dues = ""
-    running = "";
+    running = ""
 
     for entry in currentSeason:
         sid = entry['sid']
