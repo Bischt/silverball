@@ -212,6 +212,9 @@ def show_admin_content():
             dbcur.close()
             conn.close()
 
+            form.leaguename.data = leaguename
+            form.welcometext.data = welcometext
+
             return render_template('show_admin_content.html',
                    title="Admin - Edit Content",
                    highlightActive='content',
