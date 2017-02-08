@@ -8,6 +8,12 @@ class ConfigurationForm(FlaskForm):
 
     welcometext = TextField('Welcome Text', validators=[Optional()])
 
+class AddPostForm(FlaskForm):
+
+    title = StringField('Post Title')
+
+    content = TextField('Post Content')
+
 class AddLocationForm(FlaskForm):
 
     name = StringField('Name')

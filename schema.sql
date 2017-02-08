@@ -78,6 +78,14 @@ create table config (
 );
 insert into config (cid, leagueName, welcomeText) values (1, '', '');
 
+drop table if exists posts;
+create table posts (
+  pid SERIAL primary key not null,
+  timestamp timestamp not null default CURRENT_TIMESTAMP,
+  title varchar(255) not null,
+  content text not null,
+  active boolean not null default True
+);
 
 ---------------------------------------------------------
 -- Test tables for league scoring/team matching/voting --

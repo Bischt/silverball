@@ -11,6 +11,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from silverball.forms import ConfigurationForm
+from silverball.forms import AddPostForm
 from silverball.forms import AddLocationForm
 from silverball.forms import CreateSeasonForm
 
@@ -180,6 +181,10 @@ def show_admin_content():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    # Get all posts
+    dbcur.execute("select pid, timestamp, title, content, active from posts order by timestamp")
+    posts = dbcur.fetchall()
+
     # Get the current configuration
     dbcur.execute("select leagueName, welcomeText from config where cid=1")
     currentConfig = dbcur.fetchall()
@@ -218,6 +223,7 @@ def show_admin_content():
             return render_template('show_admin_content.html',
                    title="Admin - Edit Content",
                    highlightActive='content',
+                   posts=posts,
                    form=form,
                    leaguename=leaguename,
                    welcometext=welcometext)
@@ -233,6 +239,7 @@ def show_admin_content():
             return render_template('show_admin_content.html',
                    title="Admin - Edit Content",
                    highlightActive='content',
+                   posts=posts,
                    form=form,
                    leaguename=leaguename,
                    welcometext=welcometext)
@@ -243,6 +250,7 @@ def show_admin_content():
     return render_template('show_admin_content.html', 
            title="Admin - Edit Content", 
            highlightActive='content', 
+           posts=posts,
            form=form,
            leaguename=leaguename, 
            welcometext=welcometext)
