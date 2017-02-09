@@ -107,7 +107,7 @@ Add/edit content.  General league information settings as well as making/editing
 <p><a href="#" data-reveal-id="addpost" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal">Add New Post</a></p>
 
 <!--Popup for editing post-->
-<div id="editlocation" class="reveal-modal">
+<div id="editpost" class="reveal-modal">
 	<h1><span id="rendered_post_title"></span></h1>
 
 	<div>
@@ -130,6 +130,14 @@ Add/edit content.  General league information settings as well as making/editing
 
 	<div>
 	<p>Add new blog post for league homepage.</p>
+
+	<form action="" name="addPost" method="POST">
+	{{ postform.hidden_tag() }}
+
+	<p><b>Title: </b>{{ postform.title }}</p>
+	<p><b>Text: </b>{{ postform.content }}</p>
+	<p><input type="submit" value="Post" /></p>
+	</form>
 
 	</div>
 	<a class="close-reveal-modal">&#215;</a>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, IntegerField, DecimalField, HiddenField, TextField, BooleanField
-from wtforms.validators import DataRequired, NumberRange, Optional, AnyOf
+from wtforms.validators import DataRequired, NumberRange, Required, Optional, AnyOf
 
 class ConfigurationForm(FlaskForm):
 
@@ -10,9 +10,9 @@ class ConfigurationForm(FlaskForm):
 
 class AddPostForm(FlaskForm):
 
-    title = StringField('Post Title')
+    title = StringField('Post Title', validators=[Required(message="Post title cannot be blank")])
 
-    content = TextField('Post Content')
+    content = TextField('Post Content', validators=[Required(message="Post content cannot be blank")])
 
 class AddLocationForm(FlaskForm):
 

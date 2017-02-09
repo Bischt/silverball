@@ -185,6 +185,8 @@ def show_admin_content():
     dbcur.execute("select pid, timestamp, title, content, active from posts order by timestamp")
     posts = dbcur.fetchall()
 
+    postform = AddPostForm()
+
     # Get the current configuration
     dbcur.execute("select leagueName, welcomeText from config where cid=1")
     currentConfig = dbcur.fetchall()
@@ -201,9 +203,50 @@ def show_admin_content():
     form.leaguename.data = leaguename
     form.welcometext.data = welcometext
 
-    # When the form is submitted, process it
+    # When a form is submitted, process it
     if request.method == 'POST':
-        # If all looks good, update the database
+        # Process new post form
+        if postform.validate_on_submit():
+
+            posttitle = request.form['title']
+            postcontent = request.form['content']
+
+            dbcur.execute("insert into posts (title, content) values (%s, %s)", (posttitle, postcontent))
+
+            conn.commit()
+
+            flash("New post '%s' created!" % (posttitle))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_content.html',
+                   title="Admin - Edit Content",
+                   highlightActive='content',
+                   posts=posts,
+                   postform=postform,
+                   form=form,
+                   leaguename=leaguename,
+                   welcometext=welcometext)
+
+        else:
+            for field, errors in postform.errors.items():
+                for error in errors:
+                    flash(u"Error in the %s field - %s" % (getattr(postform, field).label.text, error))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_content.html',
+                   title="Admin - Edit Content",
+                   highlightActive='content',
+                   posts=posts,
+                   postform=postform,
+                   form=form,
+                   leaguename=leaguename,
+                   welcometext=welcometext)
+
+        # Process update content form
         if form.validate_on_submit():
 
             leaguename = request.form['leaguename']
@@ -224,6 +267,7 @@ def show_admin_content():
                    title="Admin - Edit Content",
                    highlightActive='content',
                    posts=posts,
+                   postform=postform,
                    form=form,
                    leaguename=leaguename,
                    welcometext=welcometext)
@@ -240,6 +284,7 @@ def show_admin_content():
                    title="Admin - Edit Content",
                    highlightActive='content',
                    posts=posts,
+                   postform=postform,
                    form=form,
                    leaguename=leaguename,
                    welcometext=welcometext)
@@ -251,6 +296,7 @@ def show_admin_content():
            title="Admin - Edit Content", 
            highlightActive='content', 
            posts=posts,
+           postform=postform,
            form=form,
            leaguename=leaguename, 
            welcometext=welcometext)
