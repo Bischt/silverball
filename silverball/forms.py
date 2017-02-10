@@ -14,6 +14,35 @@ class AddPostForm(FlaskForm):
 
     content = TextField('Post Content', validators=[Required(message="Post content cannot be blank")])
 
+class AddPlayerForm(FlaskForm):
+    nick = StringField('Initials', validators=[Optional()])
+
+    name = StringField('Name', validators=[Required(message="Must enter player name")])
+
+    email = StringField('Email', validators=[Optional()])
+
+    phone = StringField('Phone', validators=[Optional()])
+
+    location = StringField('Location', validators=[Optional()])
+
+    ifpanumber = IntegerField('IFPA Number', validators=[Optional()])
+
+    pinside = StringField('Pinside', validators=[Optional()])
+
+    notes = TextField('Notes', validators=[Optional()])
+
+    status = SelectField(
+        'Dues Paid?',
+        choices=[('0', 'Not Paid'), ('1', 'Paid')],
+        validators=[AnyOf(values=['0', '1'], message="Must select whether or not dues have been paid")]
+    )
+
+    active = SelectField(
+        'Active?',
+        choices=[('1', 'Yes'), ('0', 'No')],
+        validators=[AnyOf(values=['0', '1'], message="Must select whether or not player is active")]
+    )
+
 class AddLocationForm(FlaskForm):
 
     name = StringField('Name', validators=[Required(message="Must enter location name")])

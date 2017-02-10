@@ -6,7 +6,7 @@ create table player (
   email varchar(255),
   phone varchar(25),
   location varchar(255),
-  ifpanumber integer,
+  ifpanumber varchar(10),
   pinside varchar(30),
   notes text,
   status integer,

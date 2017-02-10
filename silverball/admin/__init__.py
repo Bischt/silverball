@@ -12,6 +12,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from silverball.forms import ConfigurationForm
 from silverball.forms import AddPostForm
+from silverball.forms import AddPlayerForm
 from silverball.forms import AddLocationForm
 from silverball.forms import CreateSeasonForm
 
@@ -53,18 +54,72 @@ def show_admin():
            entries=entries, 
            locations=locations)
 
-@admin.route('/admin/players')
+@admin.route('/admin/players', methods=['GET', 'POST'])
 def show_admin_players():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     dbcur.execute("select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player order by active")
     playerEntries = dbcur.fetchall()
+
+    playerform = AddPlayerForm()
+
+    # When a form is submitted, process it
+    if request.method == 'POST':
+
+        # Process new player form
+        if playerform.validate_on_submit():
+
+            # Pull submitted data from the form
+            playerinitials = request.form['nick']
+            playername = request.form['name']
+            playeremail = request.form['email']
+            playerphone = request.form['phone']
+            playerlocation = request.form['location']
+            playerifpanumber = request.form['ifpanumber']
+            playerpinside = request.form['pinside']
+            playernotes = request.form['notes']
+            playerstatus = request.form['status']
+            playeractive = request.form['active']
+
+            # Add new player record to the database
+            dbcur.execute("insert into player (nick, name, email, phone, location, ifpanumber, pinside, notes, status, active) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (playerinitials, playername, playeremail, playerphone, playerlocation, playerifpanumber, playerpinside, playernotes, playerstatus, playeractive))
+
+            conn.commit()
+
+            # Succeeded, so lets display a message
+            flash("Added new player - %s" % (playername))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_players.html',
+                   title="Admin - Manage Players",
+                   highlightActive='players',
+                   entries=playerEntries,
+                   playerform=playerform)
+
+        else:
+            # Server side validation failed, lets not proceed, and instead display error
+            for field, errors in playerform.errors.items():
+                for error in errors:
+                    flash(u"Error in the %s field - %s" % (getattr(playerform, field).label.text, error))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_players.html',
+                   title="Admin - Manage Players",
+                   highlightActive='players',
+                   entries=playerEntries,
+                   playerform=playerform)
+
     dbcur.close()
     conn.close()
     return render_template('show_admin_players.html', 
            title="Admin - Manage Players", 
            highlightActive='players', 
-           entries=playerEntries)
+           entries=playerEntries,
+           playerform=playerform)
 
 @admin.route('/admin/_admin_player_info')
 # Get all the admin editable details about a player from the database and return as JSON
