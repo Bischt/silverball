@@ -16,21 +16,29 @@ class AddPostForm(FlaskForm):
 
 class AddLocationForm(FlaskForm):
 
-    name = StringField('Name')
+    name = StringField('Name', validators=[Required(message="Must enter location name")])
 
-    address = StringField('Address')
+    address = StringField('Address', validators=[Optional()])
 
-    addressPrivate = BooleanField('Private Address')
-
-    notes = TextField('Notes')
-
-    locType = SelectField(
-        'Location Type', 
-        choices=[(0, 'Public Location'), (1, 'Private Residence')], 
-        validators=[AnyOf(values=[0, 1], message="Must select a location type")]
+    addressprivate = SelectField(
+        'Hide Address',
+        choices=[('0', 'No'), ('1', 'Yes')],
+        validators=[AnyOf(values=['0', '1'], message="Must select to hide or display address")]
     )
 
-    active = BooleanField('Active')
+    notes = TextField('Notes', validators=[Optional()])
+
+    loctype = SelectField(
+        'Location Type', 
+        choices=[('0', 'Public Location'), ('1', 'Private Residence')], 
+        validators=[AnyOf(values=['0', '1'], message="Must select a location type")]
+    )
+
+    active = SelectField(
+        'Active',
+        choices=[('1', 'Yes'), ('0', 'No')],
+        validators=[AnyOf(values=['0', '1'], message="Must select active or not")]
+    )
 
 class CreateSeasonForm(FlaskForm):
 

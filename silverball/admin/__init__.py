@@ -107,18 +107,68 @@ def admin_player_info():
                    status=status, 
                    active=active)
 
-@admin.route('/admin/locations')
+@admin.route('/admin/locations', methods=['GET', 'POST'])
 def show_admin_locations():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     dbcur.execute("select lid, name, address, active, notes from location order by active")
     locations = dbcur.fetchall()
+
+    locationform = AddLocationForm()
+
+    # When a form is submitted, process it
+    if request.method == 'POST':
+
+        # Process new location form
+        if locationform.validate_on_submit():
+
+            # Pull submitted data from the form
+            locationname = request.form['name']
+            locationaddress = request.form['address']
+            locationprivate = request.form['addressprivate']
+            locationtype = request.form['loctype']
+            locationnotes = request.form['notes']
+            locationactive = request.form['active']
+
+            # Add new location record to the database
+            dbcur.execute("insert into location (name, address, addressPrivate, notes, locType, active) values (%s, %s, %s, %s, %s, %s)", (locationname, locationaddress, locationprivate, locationnotes, locationtype, locationactive))
+
+            conn.commit()
+
+            # Succeeded, so lets display a message
+            flash("New location added! - %s" % (locationname))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_locations.html',
+                title="Admin - Manage Locations",
+                highlightActive='locations',
+                locations=locations,
+                locationform=locationform)
+  
+        else:
+            # Server side validation failed, lets not proceed, and instead display error
+            for field, errors in locationform.errors.items():
+                for error in errors:
+                    flash(u"Error in the %s field - %s" % (getattr(locationform, field).label.text, error))
+
+            dbcur.close()
+            conn.close()
+
+            return render_template('show_admin_locations.html',
+                title="Admin - Manage Locations",
+                highlightActive='locations',
+                locations=locations,
+                locationform=locationform)
+
     dbcur.close()
     conn.close()
     return render_template('show_admin_locations.html', 
            title="Admin - Manage Locations", 
            highlightActive='locations',
-           locations=locations)
+           locations=locations,
+           locationform=locationform)
 
 @admin.route('/admin/_admin_location_info')
 def admin_location_info():

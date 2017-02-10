@@ -154,6 +154,19 @@ $(document).ready(function() {
 	<div>
 	<p>Add new location for league play.</p>
 
+	<form action="" name="addLocation" method="POST">
+	{{ locationform.hidden_tag() }}
+
+	<p><b>Name: </b>{{ locationform.name }}</p>
+	<p><b>Address: </b>{{ locationform.address }}</p>
+	<p><b>Hide Address? </b>{{ locationform.addressprivate }}</p>
+	<p><b>Location Type: </b>{{ locationform.loctype }}</p>
+	<p><b>Notes: </b>{{ locationform.notes }}</p>
+	<p><b>Active? </b>{{ locationform.active }}</p>
+
+	<input type="submit" value="Add" />
+	</form>
+
 	</div>
 	<a class="close-reveal-modal">&#215;</a>
 </div>
