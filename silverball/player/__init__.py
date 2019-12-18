@@ -22,9 +22,9 @@ def connect_db():
                                                                  current_app.config["DB_HOST"], 
                                                                  current_app.config["DB_PASS"])
         return psycopg2.connect(conn_string)
-        print "DB connection successful!"
+        print("DB connection successful!")
     except:
-        print "I am unable to connect to the database"
+        print("I am unable to connect to the database")
         exit(1)
 
 @player.route('/')
