@@ -3,18 +3,18 @@ import psycopg2
 import psycopg2.extras
 import requests
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, current_app
-from flask_openid import OpenID
+#from flask_openid import OpenID
 from flask_wtf import FlaskForm
 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from silverball.forms import ConfigurationForm
-from silverball.forms import AddPostForm
-from silverball.forms import AddPlayerForm
-from silverball.forms import AddLocationForm
-from silverball.forms import CreateSeasonForm
+from ..forms import ConfigurationForm
+from ..forms import AddPostForm
+from ..forms import AddPlayerForm
+from ..forms import AddLocationForm
+from ..forms import CreateSeasonForm
 
 app=Flask(__name__)
 

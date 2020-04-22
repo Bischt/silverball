@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+
+  flask:
+    build: ./flask
+    container_name: flask
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - APP_NAME=app
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASS=change_me
+      - DB_NAME=silverball
+    expose:
+      - 8080
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+
+  db:
+    build: ./postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change_me
+      POSTGRES_DB: silverball

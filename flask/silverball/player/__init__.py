@@ -3,7 +3,7 @@ import psycopg2
 import psycopg2.extras
 import requests
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, current_app
-from flask_openid import OpenID
+#from flask_openid import OpenID
 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -25,7 +25,6 @@ def connect_db():
         print("DB connection successful!")
     except:
         print("I am unable to connect to the database")
-        exit(1)
 
 @player.route('/')
 def show_home():
@@ -133,7 +132,7 @@ def single_player_profile():
         name = entry['name']
         phone = entry['phone']
         location = entry['location']
-	ifpanumber = entry['ifpanumber']
+        ifpanumber = entry['ifpanumber']
         pinside = entry['pinside']
         notes = entry['notes']
         status = entry['status']
@@ -151,16 +150,16 @@ def single_player_profile():
         statusCode = response.status_code
 
         # If status code 200 update database with new cached data
-	if statusCode == 200:
-            ifpadata = json.loads(response.content)
-            currentRank = ifpadata["player_stats"]["current_wppr_rank"]
-            currentWPPRValue = ifpadata["player_stats"]["current_wppr_value"]
-            bestFinish = ifpadata["player_stats"]["best_finish"]
-            activeEvents = ifpadata["player_stats"]["total_active_events"]
+    if statusCode == 200:
+        ifpadata = json.loads(response.content)
+        currentRank = ifpadata["player_stats"]["current_wppr_rank"]
+        currentWPPRValue = ifpadata["player_stats"]["current_wppr_value"]
+        bestFinish = ifpadata["player_stats"]["best_finish"]
+        activeEvents = ifpadata["player_stats"]["total_active_events"]
 
-            dbcur.execute("update player set currentrank=%s, currentwpprvalue=%s, bestfinish=%s, activeevents=%s  where pid=%s", (
-                         currentRank, currentWPPRValue, bestFinish, activeEvents, pid))
-            conn.commit()
+        dbcur.execute("update player set currentrank=%s, currentwpprvalue=%s, bestfinish=%s, activeevents=%s  where "
+                      "pid=%s", (currentRank, currentWPPRValue, bestFinish, activeEvents, pid))
+        conn.commit()
 
     dbcur.close()
     conn.close()
