@@ -2,8 +2,8 @@ from decimal import Decimal
 import psycopg2
 import psycopg2.extras
 import requests
-from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, current_app
-#from flask_openid import OpenID
+from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, \
+    current_app
 from flask_wtf import FlaskForm
 
 from sqlalchemy import create_engine, Column, Integer, String
@@ -16,26 +16,27 @@ from ..forms import AddPlayerForm
 from ..forms import AddLocationForm
 from ..forms import CreateSeasonForm
 
-app=Flask(__name__)
+app = Flask(__name__)
 
-admin = Blueprint('admin', 
-                  __name__, 
-                  static_url_path='/admin', 
-                  static_folder='../static', 
+admin = Blueprint('admin',
+                  __name__,
+                  static_url_path='/admin',
+                  static_folder='../static',
                   template_folder='../templates')
+
 
 # Connect to database
 def connect_db():
     try:
-        conn_string = "dbname=%s user=%s host=%s password=%s" % (current_app.config["DB_NAME"], 
-                                                                 current_app.config["DB_USER"], 
-                                                                 current_app.config["DB_HOST"], 
+        conn_string = "dbname=%s user=%s host=%s password=%s" % (current_app.config["DB_NAME"],
+                                                                 current_app.config["DB_USER"],
+                                                                 current_app.config["DB_HOST"],
                                                                  current_app.config["DB_PASS"])
         return psycopg2.connect(conn_string)
-        print("DB connection successful!")
-    except:
-        print("I am unable to connect to the database")
-        exit(1)
+
+    except psycopg2.Error as e:
+        print("I am unable to connect to the database: {}".format(e.pgerror))
+
 
 @admin.route('/admin')
 @admin.route('/admin/runleague')
@@ -48,17 +49,20 @@ def show_admin():
     locations = dbcur.fetchall()
     dbcur.close()
     conn.close()
-    return render_template('show_admin.html', 
-           title="Admin - Run League", 
-           highlightActive='runleague', 
-           entries=entries, 
-           locations=locations)
+    return render_template('show_admin.html',
+                           title="Admin - Run League",
+                           highlightActive='runleague',
+                           entries=entries,
+                           locations=locations)
+
 
 @admin.route('/admin/players', methods=['GET', 'POST'])
 def show_admin_players():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute("select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player order by active")
+    dbcur.execute(
+        "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player order "
+        "by active")
     playerEntries = dbcur.fetchall()
 
     playerform = AddPlayerForm()
@@ -82,7 +86,11 @@ def show_admin_players():
             playeractive = request.form['active']
 
             # Add new player record to the database
-            dbcur.execute("insert into player (nick, name, email, phone, location, ifpanumber, pinside, notes, status, active) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (playerinitials, playername, playeremail, playerphone, playerlocation, playerifpanumber, playerpinside, playernotes, playerstatus, playeractive))
+            dbcur.execute(
+                "insert into player (nick, name, email, phone, location, ifpanumber, pinside, notes, status, "
+                "active) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (playerinitials, playername, playeremail, playerphone, playerlocation, playerifpanumber, playerpinside,
+                 playernotes, playerstatus, playeractive))
 
             conn.commit()
 
@@ -93,10 +101,10 @@ def show_admin_players():
             conn.close()
 
             return render_template('show_admin_players.html',
-                   title="Admin - Manage Players",
-                   highlightActive='players',
-                   entries=playerEntries,
-                   playerform=playerform)
+                                   title="Admin - Manage Players",
+                                   highlightActive='players',
+                                   entries=playerEntries,
+                                   playerform=playerform)
 
         else:
             # Server side validation failed, lets not proceed, and instead display error
@@ -108,18 +116,19 @@ def show_admin_players():
             conn.close()
 
             return render_template('show_admin_players.html',
-                   title="Admin - Manage Players",
-                   highlightActive='players',
-                   entries=playerEntries,
-                   playerform=playerform)
+                                   title="Admin - Manage Players",
+                                   highlightActive='players',
+                                   entries=playerEntries,
+                                   playerform=playerform)
 
     dbcur.close()
     conn.close()
-    return render_template('show_admin_players.html', 
-           title="Admin - Manage Players", 
-           highlightActive='players', 
-           entries=playerEntries,
-           playerform=playerform)
+    return render_template('show_admin_players.html',
+                           title="Admin - Manage Players",
+                           highlightActive='players',
+                           entries=playerEntries,
+                           playerform=playerform)
+
 
 @admin.route('/admin/_admin_player_info')
 # Get all the admin editable details about a player from the database and return as JSON
@@ -127,8 +136,9 @@ def admin_player_info():
     pid = request.args.get('pid', 0, type=int)
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, phone, email, location, ifpanumber, pinside, notes, status, active from player where pid=%s;"
-    data = (pid, )
+    SQL = "select pid, nick, name, phone, email, location, ifpanumber, pinside, notes, status, active from player " \
+          "where pid=%s; "
+    data = (pid,)
     dbcur.execute(SQL, data)
     entries = dbcur.fetchall()
     dbcur.close()
@@ -150,17 +160,18 @@ def admin_player_info():
         status = entry['status']
         active = entry['active']
 
-    return jsonify(pid=pid, 
-                   nick=nick, 
-                   name=name, 
-                   phone=phone, 
-                   email=email, 
-                   location=location, 
+    return jsonify(pid=pid,
+                   nick=nick,
+                   name=name,
+                   phone=phone,
+                   email=email,
+                   location=location,
                    ifpanumber=ifpanumber,
-                   pinside=pinside, 
-                   notes=notes, 
-                   status=status, 
+                   pinside=pinside,
+                   notes=notes,
+                   status=status,
                    active=active)
+
 
 @admin.route('/admin/locations', methods=['GET', 'POST'])
 def show_admin_locations():
@@ -186,7 +197,10 @@ def show_admin_locations():
             locationactive = request.form['active']
 
             # Add new location record to the database
-            dbcur.execute("insert into location (name, address, addressPrivate, notes, locType, active) values (%s, %s, %s, %s, %s, %s)", (locationname, locationaddress, locationprivate, locationnotes, locationtype, locationactive))
+            dbcur.execute(
+                "insert into location (name, address, addressPrivate, notes, locType, active) values (%s, %s, %s, %s, "
+                "%s, %s)",
+                (locationname, locationaddress, locationprivate, locationnotes, locationtype, locationactive))
 
             conn.commit()
 
@@ -197,11 +211,11 @@ def show_admin_locations():
             conn.close()
 
             return render_template('show_admin_locations.html',
-                title="Admin - Manage Locations",
-                highlightActive='locations',
-                locations=locations,
-                locationform=locationform)
-  
+                                   title="Admin - Manage Locations",
+                                   highlightActive='locations',
+                                   locations=locations,
+                                   locationform=locationform)
+
         else:
             # Server side validation failed, lets not proceed, and instead display error
             for field, errors in locationform.errors.items():
@@ -212,18 +226,19 @@ def show_admin_locations():
             conn.close()
 
             return render_template('show_admin_locations.html',
-                title="Admin - Manage Locations",
-                highlightActive='locations',
-                locations=locations,
-                locationform=locationform)
+                                   title="Admin - Manage Locations",
+                                   highlightActive='locations',
+                                   locations=locations,
+                                   locationform=locationform)
 
     dbcur.close()
     conn.close()
-    return render_template('show_admin_locations.html', 
-           title="Admin - Manage Locations", 
-           highlightActive='locations',
-           locations=locations,
-           locationform=locationform)
+    return render_template('show_admin_locations.html',
+                           title="Admin - Manage Locations",
+                           highlightActive='locations',
+                           locations=locations,
+                           locationform=locationform)
+
 
 @admin.route('/admin/_admin_location_info')
 def admin_location_info():
@@ -247,12 +262,16 @@ def admin_location_info():
 
         return jsonify(lid=lid, name=name, address=address, notes=notes, active=active)
 
+
 @admin.route('/admin/_games_for_location')
 def games_for_location():
     lid = request.args.get('lid', 0, type=int)
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select game.gid, game.mid, game.condition, game.notes, machines.name, machines.abbr, machines.manufacturer, machines.manDate, machines.players, machines.gameType, machines.theme, machines.ipdbURL from game inner join machines on game.mid=machines.mid where game.active = true and game.lid = %s;"
+    SQL = "select game.gid, game.mid, game.condition, game.notes, machines.name, machines.abbr, " \
+          "machines.manufacturer, machines.manDate, machines.players, machines.gameType, machines.theme, " \
+          "machines.ipdbURL from game inner join machines on game.mid=machines.mid where game.active = true and " \
+          "game.lid = %s; "
     data = (lid,)
     dbcur.execute(SQL, data)
     entries = dbcur.fetchall()
@@ -260,6 +279,7 @@ def games_for_location():
     conn.close()
 
     return jsonify(games=entries)
+
 
 @admin.route('/admin/_update_location_status')
 # Update the location status.  Inactive locations are not available for league play/view.
@@ -280,6 +300,7 @@ def update_location_status():
     dbcur.close()
     conn.close()
     return jsonify(ret=0)
+
 
 @admin.route('/admin/content', methods=['GET', 'POST'])
 def show_admin_content():
@@ -326,13 +347,13 @@ def show_admin_content():
             conn.close()
 
             return render_template('show_admin_content.html',
-                   title="Admin - Edit Content",
-                   highlightActive='content',
-                   posts=posts,
-                   postform=postform,
-                   form=form,
-                   leaguename=leaguename,
-                   welcometext=welcometext)
+                                   title="Admin - Edit Content",
+                                   highlightActive='content',
+                                   posts=posts,
+                                   postform=postform,
+                                   form=form,
+                                   leaguename=leaguename,
+                                   welcometext=welcometext)
 
         else:
             for field, errors in postform.errors.items():
@@ -343,13 +364,13 @@ def show_admin_content():
             conn.close()
 
             return render_template('show_admin_content.html',
-                   title="Admin - Edit Content",
-                   highlightActive='content',
-                   posts=posts,
-                   postform=postform,
-                   form=form,
-                   leaguename=leaguename,
-                   welcometext=welcometext)
+                                   title="Admin - Edit Content",
+                                   highlightActive='content',
+                                   posts=posts,
+                                   postform=postform,
+                                   form=form,
+                                   leaguename=leaguename,
+                                   welcometext=welcometext)
 
         # Process update content form
         if form.validate_on_submit():
@@ -369,13 +390,13 @@ def show_admin_content():
             form.welcometext.data = welcometext
 
             return render_template('show_admin_content.html',
-                   title="Admin - Edit Content",
-                   highlightActive='content',
-                   posts=posts,
-                   postform=postform,
-                   form=form,
-                   leaguename=leaguename,
-                   welcometext=welcometext)
+                                   title="Admin - Edit Content",
+                                   highlightActive='content',
+                                   posts=posts,
+                                   postform=postform,
+                                   form=form,
+                                   leaguename=leaguename,
+                                   welcometext=welcometext)
 
         else:
             for field, errors in form.errors.items():
@@ -386,32 +407,36 @@ def show_admin_content():
             conn.close()
 
             return render_template('show_admin_content.html',
-                   title="Admin - Edit Content",
-                   highlightActive='content',
-                   posts=posts,
-                   postform=postform,
-                   form=form,
-                   leaguename=leaguename,
-                   welcometext=welcometext)
+                                   title="Admin - Edit Content",
+                                   highlightActive='content',
+                                   posts=posts,
+                                   postform=postform,
+                                   form=form,
+                                   leaguename=leaguename,
+                                   welcometext=welcometext)
 
     dbcur.close()
     conn.close()
 
-    return render_template('show_admin_content.html', 
-           title="Admin - Edit Content", 
-           highlightActive='content', 
-           posts=posts,
-           postform=postform,
-           form=form,
-           leaguename=leaguename, 
-           welcometext=welcometext)
+    return render_template('show_admin_content.html',
+                           title="Admin - Edit Content",
+                           highlightActive='content',
+                           posts=posts,
+                           postform=postform,
+                           form=form,
+                           leaguename=leaguename,
+                           welcometext=welcometext)
+
 
 @admin.route('/admin/config', methods=['GET', 'POST'])
 def show_admin_config():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     # Get the current league season (whether started or not)
-    dbcur.execute("select sid, timestamp, seasonlength, numtodrop, numofrounds, gamesperround, scoring, seeding, playerorder, machinedrawing, dues, running, historical, active from season where historical=false order by timestamp limit 1")
+    dbcur.execute(
+        "select sid, timestamp, seasonlength, numtodrop, numofrounds, gamesperround, scoring, seeding, playerorder, "
+        "machinedrawing, dues, running, historical, active from season where historical=false order by timestamp "
+        "limit 1")
     currentSeason = dbcur.fetchall()
 
     sid = ""
@@ -440,7 +465,9 @@ def show_admin_config():
         running = entry['running']
 
     # Get historical league seasons
-    dbcur.execute("select sid, timestamp, seasonLength, numToDrop, numOfRounds, gamesPerRound, scoring, seeding, playerOrder, machineDrawing, dues, running, historical, active from season where historical=true order by timestamp")
+    dbcur.execute(
+        "select sid, timestamp, seasonLength, numToDrop, numOfRounds, gamesPerRound, scoring, seeding, playerOrder, "
+        "machineDrawing, dues, running, historical, active from season where historical=true order by timestamp")
 
     historicalSeasons = dbcur.fetchall()
 
@@ -475,7 +502,10 @@ def show_admin_config():
             # If season exists (and is not started)
             if sid == "" and not running:
 
-                dbcur.execute("insert into season (seasonlength, numtodrop, numofrounds, gamesperround, scoring, seeding, playerorder, machinedrawing, dues) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (seasonLength, dropWeeks, numRounds, numGames, scoring, seeding, playorder, drawing, dues))
+                dbcur.execute(
+                    "insert into season (seasonlength, numtodrop, numofrounds, gamesperround, scoring, seeding, "
+                    "playerorder, machinedrawing, dues) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (seasonLength, dropWeeks, numRounds, numGames, scoring, seeding, playorder, drawing, dues))
                 conn.commit()
 
                 flash("New season added!")
@@ -483,7 +513,10 @@ def show_admin_config():
             elif sid > 0 and not running:
 
                 dbcur = conn.cursor()
-                dbcur.execute("update season set seasonlength=%s, numtodrop=%s, numofrounds=%s, gamesperround=%s, scoring=%s, seeding=%s, playerorder=%s, machinedrawing=%s, dues=%s where sid=%s", (seasonLength, dropWeeks, numRounds, numGames, scoring, seeding, playorder, drawing, dues, sid))
+                dbcur.execute(
+                    "update season set seasonlength=%s, numtodrop=%s, numofrounds=%s, gamesperround=%s, scoring=%s, "
+                    "seeding=%s, playerorder=%s, machinedrawing=%s, dues=%s where sid=%s",
+                    (seasonLength, dropWeeks, numRounds, numGames, scoring, seeding, playorder, drawing, dues, sid))
                 conn.commit()
 
                 flash("Season updated!")
@@ -495,13 +528,13 @@ def show_admin_config():
             dbcur.close()
             conn.close()
 
-            return render_template('show_admin_config.html', 
-                   title="Admin - Configure League", 
-                   highlightActive='configure', 
-                   form=form, 
-                   cursid=sid, 
-                   currunning=running, 
-                   historicalseason=historicalSeasons)
+            return render_template('show_admin_config.html',
+                                   title="Admin - Configure League",
+                                   highlightActive='configure',
+                                   form=form,
+                                   cursid=sid,
+                                   currunning=running,
+                                   historicalseason=historicalSeasons)
 
         # If the form fails validation, provide reasonable output via flash
         else:
@@ -509,26 +542,26 @@ def show_admin_config():
             for field, errors in form.errors.items():
                 for error in errors:
                     flash(u"Error in the %s field - %s" % (getattr(form, field).label.text, error))
-            
+
             dbcur.close()
             conn.close()
 
             return render_template('show_admin_config.html',
-                   title="Admin - Configure League",
-                   highlightActive='configure',
-                   form=form,
-                   cursid=sid,
-                   currunning=running,
-                   historicalseason=historicalSeasons)
+                                   title="Admin - Configure League",
+                                   highlightActive='configure',
+                                   form=form,
+                                   cursid=sid,
+                                   currunning=running,
+                                   historicalseason=historicalSeasons)
 
+    return render_template('show_admin_config.html',
+                           title="Admin - Configure League",
+                           highlightActive='configure',
+                           form=form,
+                           cursid=sid,
+                           currunning=running,
+                           historicalseason=historicalSeasons)
 
-    return render_template('show_admin_config.html', 
-           title="Admin - Configure League", 
-           highlightActive='configure', 
-           form=form, 
-           cursid=sid, 
-           currunning=running, 
-           historicalseason=historicalSeasons)
 
 @admin.route('/admin/_update_season_hidden')
 # Update the season activity.  Inactive seasons are not available for view.
@@ -549,6 +582,7 @@ def update_season_hidden():
     dbcur.close()
     conn.close()
     return jsonify(ret=0)
+
 
 @admin.route('/admin/data')
 def show_admin_data():

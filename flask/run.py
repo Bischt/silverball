@@ -1,15 +1,9 @@
-import sys
 import psycopg2
 import psycopg2.extras
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, abort, flash
-#from flask_openid import OpenID
 
 from silverball import player
 from silverball import admin
-
-# Ensure we are using utf8 so we don't get odd encoding problems
-#reload(sys)
-#sys.setdefaultencoding('utf8')
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
@@ -30,27 +24,9 @@ def connect_db():
                                                                  app.config["DB_HOST"],
                                                                  app.config["DB_PASS"])
         return psycopg2.connect(conn_string)
-        print("DB connection successful!")
-    except:
-        print("I am unable to connect to the database")
-        exit(1)
 
-
-# Initialize database
-#def init_db():
-#    print("Initializing database...")
-
-#    conn = connect_db()
-#    dbcur = conn.cursor()
-
-#    try:
-#        procedures = open('schema.sql', 'r').read()
-#        dbcur.execute(procedures)
-#        dbcur.execute("COMMIT")
-#        print("Database schema initialized!")
-#    except psycopg2.DatabaseError, e:
-#        print("\nEXCEPTION: procedures :{}\n".format(str(e)))
-#        exit(1)
+    except psycopg2.Error as e:
+        print("I am unable to connect to the database: {}".format(e.pgerror))
 
 
 if __name__ == '__main__':
