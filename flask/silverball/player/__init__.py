@@ -9,6 +9,8 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from ..backend import PlayfieldAPI
+
 app = Flask(__name__)
 
 player = Blueprint('player', __name__, static_folder='../static', template_folder='../templates')

@@ -1,6 +1,6 @@
 DEBUG = False  # Turns on debugging features in flask
 
-DB_HOST = "postgres"
+DB_HOST = "silverball-postgres"
 DB_NAME = "silverball"  # The name of the database
 
 ########################################################################

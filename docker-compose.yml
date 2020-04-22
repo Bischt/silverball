@@ -4,13 +4,13 @@ services:
 
   flask:
     build: ./flask
-    container_name: flask
+    container_name: silverball-flask
     restart: always
     depends_on:
       - db
     environment:
       - APP_NAME=app
-      - DB_HOST=postgres
+      - DB_HOST=silverball-postgres
       - DB_USER=postgres
       - DB_PASS=change_me
       - DB_NAME=silverball
@@ -19,14 +19,14 @@ services:
 
   nginx:
     build: ./nginx
-    container_name: nginx
+    container_name: silverball-nginx
     restart: always
     ports:
       - "80:80"
 
   db:
     build: ./postgres
-    container_name: postgres
+    container_name: silverball-postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
