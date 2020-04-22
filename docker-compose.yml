@@ -15,7 +15,7 @@ services:
       - DB_PASS=change_me
       - DB_NAME=silverball
     expose:
-      - 8080
+      - 8081
 
   nginx:
     build: ./nginx
