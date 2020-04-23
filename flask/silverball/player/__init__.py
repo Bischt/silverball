@@ -15,6 +15,8 @@ app = Flask(__name__)
 
 player = Blueprint('player', __name__, static_folder='../static', template_folder='../templates')
 
+playfield = PlayfieldAPI("host.docker.internal", "8080")
+
 
 # Connect to database
 def connect_db():
@@ -99,15 +101,13 @@ def update_location_status():
 
 @player.route('/players')
 def show_players():
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute(
-        "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status from player where "
-        "active=True;")
-    entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
-    return render_template('show_players.html', title='Players', highlightActive='players', entries=entries)
+    # Query api for active players
+    player_json = playfield.api_request("get", "player", "active_players", None)
+
+    ###
+    # TODO: Check for error and then redbar if API problem
+
+    return render_template('show_players.html', title='Players', highlightActive='players', entries=playfield.parse_json(player_json))
 
 
 @player.route('/players/<username>')

@@ -88,3 +88,19 @@ Features
   * Ability to dump league data in other formats
   * Ability to import historical league data?
   * API
+
+Run Locally:
+------------
+1.  cd to flask directory
+2.  `export FLASK_APP=run.py`
+    `export FLASK_ENV=development`
+3.  Run the app: `flask run`
+4.  In browser go to: `http://127.0.0.1:5000/`
+
+Run via Docker:
+--------------
+1.  In directory with docker-compose.yml: `docker-compose build`
+2.  Create & start containers: `docker-compose up`
+3.  In browser go to: `http://127.0.0.1`
+
+Shortcut: `docker-compose up --build`
