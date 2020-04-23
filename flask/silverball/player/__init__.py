@@ -104,10 +104,14 @@ def show_players():
     # Query api for active players
     player_json = playfield.api_request("get", "player", "active_players", None)
 
-    ###
-    # TODO: Check for error and then redbar if API problem
+    # If error querying API flash message to user
+    if player_json is not "Error" and player_json is not None:
+        entries = playfield.parse_json(player_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
 
-    return render_template('show_players.html', title='Players', highlightActive='players', entries=playfield.parse_json(player_json))
+    return render_template('show_players.html', title='Players', highlightActive='players', entries=entries)
 
 
 @player.route('/players/<username>')
