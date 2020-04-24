@@ -16,6 +16,8 @@ from ..forms import AddPlayerForm
 from ..forms import AddLocationForm
 from ..forms import CreateSeasonForm
 
+from ..backend import PlayfieldAPI
+
 app = Flask(__name__)
 
 admin = Blueprint('admin',
@@ -23,6 +25,8 @@ admin = Blueprint('admin',
                   static_url_path='/admin',
                   static_folder='../static',
                   template_folder='../templates')
+
+playfield = PlayfieldAPI("host.docker.internal", "8080")
 
 
 # Connect to database
@@ -41,14 +45,31 @@ def connect_db():
 @admin.route('/admin')
 @admin.route('/admin/runleague')
 def show_admin():
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute("select pid, nick, name, email, notes, status, active from player order by active")
-    entries = dbcur.fetchall()
-    dbcur.execute("select lid, name, address, active, notes from location order by active")
-    locations = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
+    player_json = playfield.api_request("get", "player", "all_players", None)
+    location_json = playfield.api_request("get", "location", "all_locations", None)
+
+    # If error querying API flash message to user
+    if player_json is not "Error" and player_json is not None:
+        entries = playfield.parse_json(player_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
+
+    # If error querying API flash message to user
+    if location_json is not "Error" and location_json is not None:
+        locations = playfield.parse_json(location_json)
+    else:
+        flash("Problem accessing Playfield API")
+        locations = {}
+
+    # conn = connect_db()
+    # dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # dbcur.execute("select pid, nick, name, email, notes, status, active from player order by active")
+    # entries = dbcur.fetchall()
+    # dbcur.execute("select lid, name, address, active, notes from location order by active")
+    # locations = dbcur.fetchall()
+    # dbcur.close()
+    # conn.close()
     return render_template('show_admin.html',
                            title="Admin - Run League",
                            highlightActive='runleague',
@@ -58,12 +79,18 @@ def show_admin():
 
 @admin.route('/admin/players', methods=['GET', 'POST'])
 def show_admin_players():
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute(
-        "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player order "
-        "by active")
-    playerEntries = dbcur.fetchall()
+    # Query API for all players
+    player_json = playfield.api_request("get", "player", "all_players", None)
+
+    # If error querying API flash message to user
+    if player_json is not "Error" and player_json is not None:
+        playerEntries = playfield.parse_json(player_json)
+    else:
+        flash("Problem accessing Playfield API")
+        playerEntries = {}
+
+    # conn = connect_db()
+    # dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     playerform = AddPlayerForm()
 
@@ -74,31 +101,36 @@ def show_admin_players():
         if playerform.validate_on_submit():
 
             # Pull submitted data from the form
-            playerinitials = request.form['nick']
-            playername = request.form['name']
-            playeremail = request.form['email']
-            playerphone = request.form['phone']
-            playerlocation = request.form['location']
-            playerifpanumber = request.form['ifpanumber']
-            playerpinside = request.form['pinside']
-            playernotes = request.form['notes']
-            playerstatus = request.form['status']
-            playeractive = request.form['active']
+            data = dict(name=request.form['name'],
+                        nick=request.form['nick'],
+                        email=request.form['email'],
+                        phone=request.form['phone'],
+                        location=request.form['location'],
+                        ifpanumber=request.form['ifpanumber'],
+                        pinside=request.form['pinside'],
+                        notes=request.form['notes'],
+                        status=request.form['status'],
+                        active=request.form['active'])
+
+            results = playfield.api_request("post", "player", "add_player", data)
 
             # Add new player record to the database
-            dbcur.execute(
-                "insert into player (nick, name, email, phone, location, ifpanumber, pinside, notes, status, "
-                "active) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (playerinitials, playername, playeremail, playerphone, playerlocation, playerifpanumber, playerpinside,
-                 playernotes, playerstatus, playeractive))
+            # dbcur.execute(
+            #    "insert into player (nick, name, email, phone, location, ifpanumber, pinside, notes, status, "
+            #    "active) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            #    (playerinitials, playername, playeremail, playerphone, playerlocation, playerifpanumber, playerpinside,
+            #     playernotes, playerstatus, playeractive))
 
-            conn.commit()
+            # conn.commit()
 
-            # Succeeded, so lets display a message
-            flash("Added new player - %s" % (playername))
+            if results is not "Error":
+                # Succeeded, so lets display a message
+                flash("Added new player - %s" % request.form['name'])
+            else:
+                flash("Problem accessing Playfield API")
 
-            dbcur.close()
-            conn.close()
+            # dbcur.close()
+            # conn.close()
 
             return render_template('show_admin_players.html',
                                    title="Admin - Manage Players",
@@ -112,8 +144,8 @@ def show_admin_players():
                 for error in errors:
                     flash(u"Error in the %s field - %s" % (getattr(playerform, field).label.text, error))
 
-            dbcur.close()
-            conn.close()
+            # dbcur.close()
+            # conn.close()
 
             return render_template('show_admin_players.html',
                                    title="Admin - Manage Players",
@@ -121,8 +153,8 @@ def show_admin_players():
                                    entries=playerEntries,
                                    playerform=playerform)
 
-    dbcur.close()
-    conn.close()
+    # dbcur.close()
+    # conn.close()
     return render_template('show_admin_players.html',
                            title="Admin - Manage Players",
                            highlightActive='players',
@@ -133,22 +165,33 @@ def show_admin_players():
 @admin.route('/admin/_admin_player_info')
 # Get all the admin editable details about a player from the database and return as JSON
 def admin_player_info():
-    pid = request.args.get('pid', 0, type=int)
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, phone, email, location, ifpanumber, pinside, notes, status, active from player " \
-          "where pid=%s; "
-    data = (pid,)
-    dbcur.execute(SQL, data)
-    entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
+    pid = request.args.get('pid', 0, type=str)
+
+    # Query API for specific player by id
+    player_json = playfield.api_request("get", "player", "player_by_id", pid)
+
+    # If error querying API flash message to user
+    if player_json is not "Error" and player_json is not None:
+        entries = playfield.parse_json(player_json)
+    else:
+        # flash("Problem accessing Playfield API")
+        entries = {}
+
+    # conn = connect_db()
+    # dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # SQL = "select pid, nick, name, phone, email, location, ifpanumber, pinside, notes, status, active from player " \
+    #      "where pid=%s; "
+    # data = (pid,)
+    # dbcur.execute(SQL, data)
+    # entries = dbcur.fetchall()
+    # dbcur.close()
+    # conn.close()
 
     # Make API call to IFPA to refresh stored player info
 
     # Parse out results and compile into JSON
     for entry in entries:
-        pid = entry['pid']
+        pid = entry['player_id']
         nick = entry['nick']
         name = entry['name']
         phone = entry['phone']
@@ -177,8 +220,16 @@ def admin_player_info():
 def show_admin_locations():
     conn = connect_db()
     dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute("select lid, name, address, active, notes from location order by active")
-    locations = dbcur.fetchall()
+
+    # Query API for locations
+    location_json = playfield.api_request("get", "location", "all_locations", None)
+
+    # If error querying API flash message to user
+    if location_json is not "Error" and location_json is not None:
+        locations = playfield.parse_json(location_json)
+    else:
+        flash("Problem accessing Playfield API")
+        locations = {}
 
     locationform = AddLocationForm()
 
@@ -188,27 +239,39 @@ def show_admin_locations():
         # Process new location form
         if locationform.validate_on_submit():
 
+            # locationname = request.form['name']
+            # locationaddress = request.form['address']
+            # locationprivate = request.form['addressprivate']
+            # locationtype = request.form['loctype']
+            # locationnotes = request.form['notes']
+            # locationactive = request.form['active']
+
             # Pull submitted data from the form
-            locationname = request.form['name']
-            locationaddress = request.form['address']
-            locationprivate = request.form['addressprivate']
-            locationtype = request.form['loctype']
-            locationnotes = request.form['notes']
-            locationactive = request.form['active']
+            data = dict(name=request.form['name'],
+                        address=request.form['address'],
+                        address_private=request.form['addressprivate'],
+                        notes=request.form['notes'],
+                        loc_type=request.form['loctype'],
+                        active=request.form['active'])
+
+            results = playfield.api_request("post", "location", "add_location", data)
 
             # Add new location record to the database
-            dbcur.execute(
-                "insert into location (name, address, addressPrivate, notes, locType, active) values (%s, %s, %s, %s, "
-                "%s, %s)",
-                (locationname, locationaddress, locationprivate, locationnotes, locationtype, locationactive))
+            # dbcur.execute(
+            #    "insert into location (name, address, addressPrivate, notes, locType, active) values (%s, %s, %s, %s, "
+            #    "%s, %s)",
+            #    (locationname, locationaddress, locationprivate, locationnotes, locationtype, locationactive))
 
-            conn.commit()
+            # conn.commit()
 
-            # Succeeded, so lets display a message
-            flash("New location added! - %s" % (locationname))
+            if results is not "Error":
+                # Succeeded, so lets display a message
+                flash("New location added! - %s" % request.form['name'])
+            else:
+                flash("Problem accessing Playfield API")
 
-            dbcur.close()
-            conn.close()
+            #dbcur.close()
+            #conn.close()
 
             return render_template('show_admin_locations.html',
                                    title="Admin - Manage Locations",
@@ -222,8 +285,8 @@ def show_admin_locations():
                 for error in errors:
                     flash(u"Error in the %s field - %s" % (getattr(locationform, field).label.text, error))
 
-            dbcur.close()
-            conn.close()
+            #dbcur.close()
+            #conn.close()
 
             return render_template('show_admin_locations.html',
                                    title="Admin - Manage Locations",
@@ -231,8 +294,8 @@ def show_admin_locations():
                                    locations=locations,
                                    locationform=locationform)
 
-    dbcur.close()
-    conn.close()
+    #dbcur.close()
+    #conn.close()
     return render_template('show_admin_locations.html',
                            title="Admin - Manage Locations",
                            highlightActive='locations',

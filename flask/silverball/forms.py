@@ -52,8 +52,8 @@ class AddLocationForm(FlaskForm):
 
     addressprivate = SelectField(
         'Hide Address',
-        choices=[('0', 'No'), ('1', 'Yes')],
-        validators=[AnyOf(values=['0', '1'], message="Must select to hide or display address")]
+        choices=[('false', 'No'), ('true', 'Yes')],
+        validators=[AnyOf(values=['false', 'true'], message="Must select to hide or display address")]
     )
 
     notes = TextField('Notes', validators=[Optional()])
@@ -66,8 +66,8 @@ class AddLocationForm(FlaskForm):
 
     active = SelectField(
         'Active',
-        choices=[('1', 'Yes'), ('0', 'No')],
-        validators=[AnyOf(values=['0', '1'], message="Must select active or not")]
+        choices=[('true', 'Yes'), ('false', 'No')],
+        validators=[AnyOf(values=['false', 'true'], message="Must select active or not")]
     )
 
 

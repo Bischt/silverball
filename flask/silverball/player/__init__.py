@@ -114,37 +114,57 @@ def show_players():
     return render_template('show_players.html', title='Players', highlightActive='players', entries=entries)
 
 
-@player.route('/players/<username>')
-def show_player_by_name(username):
+@player.route('/players/<player_id>')
+def show_player_by_name(player_id):
     # Show the user profile for the specific name provided
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player " \
-          "where active=True and nick=%s; "
-    data = (username,)
-    dbcur.execute(SQL, data)
-    entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
-    t = '%s Player Profile' % username
+    player_json = playfield.api_request("get", "player", "player_by_id", player_id)
+
+    # If error querying API flash message to user
+    if player_json is not "Error" and player_json is not None:
+        entries = playfield.parse_json(player_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
+
+    #conn = connect_db()
+    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #SQL = "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player " \
+    #      "where active=True and nick=%s; "
+    #data = (username,)
+    #dbcur.execute(SQL, data)
+    #entries = dbcur.fetchall()
+    #dbcur.close()
+    #conn.close()
+    for single_player in entries:
+        t = '%s Player Profile' % single_player["name"]
     return render_template('show_specific_player.html', title=t, highlightActive='players', entries=entries)
 
 
 @player.route('/_single_player_profile')
 # Get all the details about a player from the database and return as JSON
 def single_player_profile():
-    pid = request.args.get('pid', 0, type=int)
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select pid, nick, name, phone, location, ifpanumber, pinside, notes, status, active, currentrank, " \
-          "currentwpprvalue, bestfinish, activeevents from player where active=True and pid=%s; "
-    data = (pid,)
-    dbcur.execute(SQL, data)
-    entries = dbcur.fetchall()
+    pid = request.args.get('player_id', 0, type=str)
+
+    player_json = playfield.api_request("get", "player", "player_by_id", pid)
+
+    # If error querying API flash message to user
+    if player_json is not "Error" and player_json is not None:
+        entries = playfield.parse_json(player_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
+
+    #conn = connect_db()
+    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #SQL = "select pid, nick, name, phone, location, ifpanumber, pinside, notes, status, active, currentrank, " \
+    #      "currentwpprvalue, bestfinish, activeevents from player where active=True and pid=%s; "
+    #data = (pid,)
+    #dbcur.execute(SQL, data)
+    #entries = dbcur.fetchall()
 
     # Parse out results and compile into JSON
     for entry in entries:
-        pid = entry['pid']
+        pid = entry['player_id']
         nick = entry['nick']
         name = entry['name']
         phone = entry['phone']
@@ -174,12 +194,14 @@ def single_player_profile():
         bestFinish = ifpadata["player_stats"]["best_finish"]
         activeEvents = ifpadata["player_stats"]["total_active_events"]
 
-        dbcur.execute("update player set currentrank=%s, currentwpprvalue=%s, bestfinish=%s, activeevents=%s  where "
-                      "pid=%s", (currentRank, currentWPPRValue, bestFinish, activeEvents, pid))
-        conn.commit()
+        # TODO: Find way to cache ifpa data in a sane way
 
-    dbcur.close()
-    conn.close()
+        #dbcur.execute("update player set currentrank=%s, currentwpprvalue=%s, bestfinish=%s, activeevents=%s  where "
+        #              "pid=%s", (currentRank, currentWPPRValue, bestFinish, activeEvents, pid))
+        #conn.commit()
+
+    #dbcur.close()
+    #conn.close()
 
     return jsonify(pid=pid,
                    nick=nick,

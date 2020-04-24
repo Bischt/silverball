@@ -83,7 +83,7 @@ $(document).ready(function() {
         {% for entry in entries %}
         <tr>
                 <td><input type="text" name="nick-{{ entry['pid'] }}" value="{{ entry['nick'] }}" size="5" /></td>
-                <td width=200><a href="#" data-reveal-id="editplayer" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showPlayer({{ entry['pid'] }});">{{ entry['name'] }}</a></td>
+                <td width=200><a href="#" data-reveal-id="editplayer" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showPlayer({{ entry['player_id'] }});">{{ entry['name'] }}</a></td>
                 <td><input type="text" name="ifpa-{{ entry['pid'] }}" value="{{ entry['ifpanumber'] }}" size="10" /></td>
                 <td>
                 <select name="ispaid-{{ entry['pid'] }}" onchange="javascript:setStatus(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
