@@ -11,9 +11,9 @@
 $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
 // Render Location: AJAX call to grab specific location info
-function rl(lid) {
+function rl(location_id) {
 	$.getJSON($SCRIPT_ROOT + '/_single_location_info', {
-	lid: lid
+	location_id: location_id
 	}, function(data) {
 		$("#rendered_location_name").text(data.name);
 		$("#rendered_location_address").text(data.address);
@@ -22,9 +22,9 @@ function rl(lid) {
 }
 
 // Show Games: AJAX call to grab all games for specified location
-function sg(lid) {
+function sg(location_id) {
 	$.getJSON($SCRIPT_ROOT + '/_games_for_location', {
-	lid:lid
+	location_id:location_id
 	}, function(data) {
 		var gameoutput = "";
 		// Loop through all games for location
@@ -41,10 +41,10 @@ function sg(lid) {
 			// Loop through all details for particular game
 			var game = data.games[i];
 
-			gameoutput = gameoutput + '<td class="sorting_1"><a href="' + game[11] + '">' + game[4] + "</a></td>";
-			gameoutput = gameoutput + '<td class="">' + game[2] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[3] + "</td>";
-			gameoutput = gameoutput + '<td class="">' + game[9] + "</td>";
+			gameoutput = gameoutput + '<td class="sorting_1"><a href="' + game['game_id'] + '">' + game['name'] + "</a></td>";
+			gameoutput = gameoutput + '<td class="">' + game['condition'] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game['notes'] + "</td>";
+			gameoutput = gameoutput + '<td class="">' + game['gameType'] + "</td>";
 			gameoutput = gameoutput + "</tr>";
 		}
 		$("#gamelistbody").html(gameoutput);
@@ -69,7 +69,7 @@ List of places to play
 	<tbody>
 	{% for entry in entries %}
 	<tr>
-		<td><a href="#" data-reveal-id="viewlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['lid'] }}); sg({{ entry['lid'] }});">{{ entry['name'] }}</a></td>
+		<td><a href="#" data-reveal-id="viewlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:rl({{ entry['location_id'] }}); sg({{ entry['location_id'] }});">{{ entry['name'] }}</a></td>
 		<td>{{ entry['address'] }}</td>
 		<td>{{ entry['gamecount'] }}</td>
 	</tr>

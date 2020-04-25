@@ -237,15 +237,24 @@ def show_scores():
 
 @player.route('/locations')
 def show_locations():
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    dbcur.execute(
-        "select location.lid, location.name, location.address, location.notes, count(*) as gamecount from location "
-        "inner join game on location.lid=game.lid where location.active=true and game.active=true group by "
-        "location.lid;")
-    entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
+    location_json = playfield.api_request("get", "location", "playable_locations", None)
+
+    # If error querying API flash message to user
+    if location_json is not "Error" and location_json is not None:
+        entries = playfield.parse_json(location_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
+
+    #conn = connect_db()
+    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #dbcur.execute(
+    #    "select location.lid, location.name, location.address, location.notes, count(*) as gamecount from location "
+    #    "inner join game on location.lid=game.lid where location.active=true and game.active=true group by "
+    #    "location.lid;")
+    #entries = dbcur.fetchall()
+    #dbcur.close()
+    #conn.close()
     return render_template('show_locations.html',
                            title='Locations',
                            highlightActive='locations',
@@ -254,19 +263,29 @@ def show_locations():
 
 @player.route('/_single_location_info')
 def single_location_info():
-    lid = request.args.get('lid', 0, type=int)
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select lid, name, address, notes, active from location where active=True and lid=%s;"
-    data = (lid,)
-    dbcur.execute(SQL, data)
-    entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
+    location_id = request.args.get('location_id', 0, type=str)
+
+    location_json = playfield.api_request("get", "location", "location_by_id", location_id)
+
+    # If error querying API flash message to user
+    if location_json is not "Error" and location_json is not None:
+        entries = playfield.parse_json(location_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
+
+    #conn = connect_db()
+    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #SQL = "select lid, name, address, notes, active from location where active=True and lid=%s;"
+    #data = (lid,)
+    #dbcur.execute(SQL, data)
+    #entries = dbcur.fetchall()
+    #dbcur.close()
+    #conn.close()
 
     # Parse out results and compile into JSON
     for entry in entries:
-        lid = entry['lid']
+        lid = entry['location_id']
         name = entry['name']
         address = entry['address']
         notes = entry['notes']
@@ -277,18 +296,30 @@ def single_location_info():
 
 @player.route('/_games_for_location')
 def games_for_location():
-    lid = request.args.get('lid', 0, type=int)
-    conn = connect_db()
-    dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    SQL = "select game.gid, game.mid, game.condition, game.notes, machines.name, machines.abbr, " \
-          "machines.manufacturer, machines.manDate, machines.players, machines.gameType, machines.theme, " \
-          "machines.ipdbURL from game inner join machines on game.mid=machines.mid where game.active = true and " \
-          "game.lid = %s; "
-    data = (lid,)
-    dbcur.execute(SQL, data)
-    entries = dbcur.fetchall()
-    dbcur.close()
-    conn.close()
+    location_id = request.args.get('location_id', 0, type=str)
+
+    location_json = playfield.api_request("get", "location", "active_machines_for_location", location_id)
+
+    # If error querying API flash message to user
+    if location_json is not "Error" and location_json is not None:
+        entries = playfield.parse_json(location_json)
+    else:
+        flash("Problem accessing Playfield API")
+        entries = {}
+
+    #print("ENTRIES: {}".format(entries))
+
+    #conn = connect_db()
+    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #SQL = "select game.gid, game.mid, game.condition, game.notes, machines.name, machines.abbr, " \
+    #      "machines.manufacturer, machines.manDate, machines.players, machines.gameType, machines.theme, " \
+    #      "machines.ipdbURL from game inner join machines on game.mid=machines.mid where game.active = true and " \
+    #      "game.lid = %s; "
+    #data = (lid,)
+    #dbcur.execute(SQL, data)
+    #entries = dbcur.fetchall()
+    #dbcur.close()
+    #conn.close()
 
     return jsonify(games=entries)
 
