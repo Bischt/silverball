@@ -10,9 +10,9 @@
 $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
 // Show location details
-function showLocation(lid) {
+function showLocation(location_id) {
 	$.getJSON($SCRIPT_ROOT + '/admin/_admin_location_info', {
-	lid: lid
+	location_id: location_id
 	}, function(data) {
 		$("#rendered_location_name").text(data.name);
 		$("#rendered_location_address").text(data.address);
@@ -22,9 +22,9 @@ function showLocation(lid) {
 }
 
 // Show games for location
-function showGames(lid) {
+function showGames(location_id) {
 	$.getJSON($SCRIPT_ROOT + '/admin/_games_for_location', {
-	lid: lid
+	location_id: location_id
 	}, function(data) {
 		var gameoutput = "";
 		// Loop through all games for location
@@ -52,9 +52,9 @@ function showGames(lid) {
 }
 
 // Update location status
-function setLocationActive(lid, active) {
+function setLocationActive(location_id, active) {
 	$.getJSON($SCRIPT_ROOT + '/_update_location_status', {
-	lid:lid,
+	location_id:location_id,
 	active:active
 	}, function(data) {
 
@@ -101,9 +101,9 @@ $(document).ready(function() {
 	<tbody>
 	{% for location in locations %}
 	<tr>
-		<td><a href="#" data-reveal-id="editlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showLocation({{ location['lid'] }}); showGames({{ location['lid'] }});">{{ location['name'] }}</a></td>
+		<td><a href="#" data-reveal-id="editlocation" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showLocation({{ location['location_id'] }}); showGames({{ location['location_id'] }});">{{ location['name'] }}</a></td>
 		<td>
-		<select name="activeloc-{{ location['lid'] }}" onchange="javascript:setLocationActive(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
+		<select name="activeloc-{{ location['location_id'] }}" onchange="javascript:setLocationActive(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
 			<option value="1"{% if location['active'] == 1 %} selected{% endif %}>Active</option>
 			<option value="0"{% if location['active'] == 0 %} selected{% endif %}>Inactive</option>
 		</select>

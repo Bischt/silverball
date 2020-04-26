@@ -1,13 +1,7 @@
 import json
-import psycopg2
-import psycopg2.extras
 import requests
 from flask import Flask, Blueprint, jsonify, request, session, g, redirect, url_for, abort, render_template, flash, \
     current_app
-
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 from ..backend import PlayfieldAPI
 
@@ -18,19 +12,6 @@ player = Blueprint('player', __name__, static_folder='../static', template_folde
 playfield = PlayfieldAPI("host.docker.internal", "8080")
 
 
-# Connect to database
-def connect_db():
-    try:
-        conn_string = "dbname=%s user=%s host=%s password=%s" % (current_app.config["DB_NAME"],
-                                                                 current_app.config["DB_USER"],
-                                                                 current_app.config["DB_HOST"],
-                                                                 current_app.config["DB_PASS"])
-        return psycopg2.connect(conn_string)
-
-    except psycopg2.Error as e:
-        print("I am unable to connect to the database: {}".format(e.pgerror))
-
-
 @player.route('/')
 def show_home():
     return render_template('show_home.html', title="Home", highlightActive='home')
@@ -39,7 +20,7 @@ def show_home():
 @player.route('/_update_player_status')
 # Update the player's status.  Status specified whether or not the player has paid.
 def update_player_status():
-    pid = request.args.get('pid', 0, type=int)
+    player_id = request.args.get('player_id', 0, type=str)
     newStatus = request.args.get('newStatus', 0, type=int)
     if newStatus == 1:
         statusvalue = 1
@@ -48,19 +29,16 @@ def update_player_status():
     else:
         statusvalue = 0
 
-    conn = connect_db()
-    dbcur = conn.cursor()
-    dbcur.execute("update player set status=%s where pid=%s", (statusvalue, pid))
-    conn.commit()
-    dbcur.close()
-    conn.close()
+    data = (player_id, str(statusvalue),)
+    retval = playfield.api_request("get", "player", "set_status", data)
+
     return jsonify(ret=0)
 
 
 @player.route('/_update_player_activity')
 # Update the player's activity status.  Inactive players cannot log in and will not show up as players.
 def update_player_activity():
-    pid = request.args.get('pid', 0, type=int)
+    player_id = request.args.get('player_id', 0, type=str)
     active = request.args.get('active', 0, type=int)
     if active == 1:
         activevalue = True
@@ -69,19 +47,16 @@ def update_player_activity():
     else:
         activevalue = False
 
-    conn = connect_db()
-    dbcur = conn.cursor()
-    dbcur.execute("update player set active=%s where pid=%s", (activevalue, pid))
-    conn.commit()
-    dbcur.close()
-    conn.close()
+    data = (player_id, str(activevalue),)
+    retval = playfield.api_request("get", "player", "set_active", data)
+
     return jsonify(ret=0)
 
 
 @player.route('/_update_location_status')
 # Update the location status.  Inactive locations are not available for league play/view.
 def update_location_status():
-    lid = request.args.get('lid', 0, type=int)
+    location_id = request.args.get('location_id', 0, type=str)
     active = request.args.get('active', 0, type=int)
     if active == 1:
         activevalue = True
@@ -90,12 +65,9 @@ def update_location_status():
     else:
         activevalue = False
 
-    conn = connect_db()
-    dbcur = conn.cursor()
-    dbcur.execute("update location set active=%s where lid=%s", (activevalue, lid))
-    conn.commit()
-    dbcur.close()
-    conn.close()
+    data = (location_id, str(activevalue),)
+    retval = playfield.api_request("get", "location", "set_active", data)
+
     return jsonify(ret=0)
 
 
@@ -126,15 +98,6 @@ def show_player_by_name(player_id):
         flash("Problem accessing Playfield API")
         entries = {}
 
-    #conn = connect_db()
-    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    #SQL = "select pid, nick, name, email, phone, location, ifpanumber, pinside, notes, status, active from player " \
-    #      "where active=True and nick=%s; "
-    #data = (username,)
-    #dbcur.execute(SQL, data)
-    #entries = dbcur.fetchall()
-    #dbcur.close()
-    #conn.close()
     for single_player in entries:
         t = '%s Player Profile' % single_player["name"]
     return render_template('show_specific_player.html', title=t, highlightActive='players', entries=entries)
@@ -153,14 +116,6 @@ def single_player_profile():
     else:
         flash("Problem accessing Playfield API")
         entries = {}
-
-    #conn = connect_db()
-    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    #SQL = "select pid, nick, name, phone, location, ifpanumber, pinside, notes, status, active, currentrank, " \
-    #      "currentwpprvalue, bestfinish, activeevents from player where active=True and pid=%s; "
-    #data = (pid,)
-    #dbcur.execute(SQL, data)
-    #entries = dbcur.fetchall()
 
     # Parse out results and compile into JSON
     for entry in entries:
@@ -195,13 +150,6 @@ def single_player_profile():
         activeEvents = ifpadata["player_stats"]["total_active_events"]
 
         # TODO: Find way to cache ifpa data in a sane way
-
-        #dbcur.execute("update player set currentrank=%s, currentwpprvalue=%s, bestfinish=%s, activeevents=%s  where "
-        #              "pid=%s", (currentRank, currentWPPRValue, bestFinish, activeEvents, pid))
-        #conn.commit()
-
-    #dbcur.close()
-    #conn.close()
 
     return jsonify(pid=pid,
                    nick=nick,
@@ -246,15 +194,6 @@ def show_locations():
         flash("Problem accessing Playfield API")
         entries = {}
 
-    #conn = connect_db()
-    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    #dbcur.execute(
-    #    "select location.lid, location.name, location.address, location.notes, count(*) as gamecount from location "
-    #    "inner join game on location.lid=game.lid where location.active=true and game.active=true group by "
-    #    "location.lid;")
-    #entries = dbcur.fetchall()
-    #dbcur.close()
-    #conn.close()
     return render_template('show_locations.html',
                            title='Locations',
                            highlightActive='locations',
@@ -273,15 +212,6 @@ def single_location_info():
     else:
         flash("Problem accessing Playfield API")
         entries = {}
-
-    #conn = connect_db()
-    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    #SQL = "select lid, name, address, notes, active from location where active=True and lid=%s;"
-    #data = (lid,)
-    #dbcur.execute(SQL, data)
-    #entries = dbcur.fetchall()
-    #dbcur.close()
-    #conn.close()
 
     # Parse out results and compile into JSON
     for entry in entries:
@@ -306,20 +236,6 @@ def games_for_location():
     else:
         flash("Problem accessing Playfield API")
         entries = {}
-
-    #print("ENTRIES: {}".format(entries))
-
-    #conn = connect_db()
-    #dbcur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    #SQL = "select game.gid, game.mid, game.condition, game.notes, machines.name, machines.abbr, " \
-    #      "machines.manufacturer, machines.manDate, machines.players, machines.gameType, machines.theme, " \
-    #      "machines.ipdbURL from game inner join machines on game.mid=machines.mid where game.active = true and " \
-    #      "game.lid = %s; "
-    #data = (lid,)
-    #dbcur.execute(SQL, data)
-    #entries = dbcur.fetchall()
-    #dbcur.close()
-    #conn.close()
 
     return jsonify(games=entries)
 

@@ -6,14 +6,8 @@ services:
     build: ./flask
     container_name: silverball-flask
     restart: always
-    depends_on:
-      - db
     environment:
       - APP_NAME=app
-      - DB_HOST=silverball-postgres
-      - DB_USER=postgres
-      - DB_PASS=change_me
-      - DB_NAME=silverball
     expose:
       - 8081
 
@@ -23,12 +17,3 @@ services:
     restart: always
     ports:
       - "80:80"
-
-  db:
-    build: ./postgres
-    container_name: silverball-postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: change_me
-      POSTGRES_DB: silverball

@@ -10,9 +10,9 @@
 $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
 // Show player details
-function showPlayer(pid) {
+function showPlayer(player_id) {
 	$.getJSON($SCRIPT_ROOT + '/admin/_admin_player_info', {
-	pid: pid
+	player_id: player_id
 	}, function(data) {
 		$("#rendered_player_nick").text(data.nick);
 		if (data.nick != "") {
@@ -32,9 +32,9 @@ function showPlayer(pid) {
 }
 
 // Update player status
-function setStatus(pid, newStatus) {
+function setStatus(player_id, newStatus) {
 	$.getJSON($SCRIPT_ROOT + '/_update_player_status', {
-	pid: pid,
+	player_id: player_id,
 	newStatus: newStatus
 	}, function(data) {
 
@@ -42,9 +42,9 @@ function setStatus(pid, newStatus) {
 }
 
 // Update player activity
-function setActivity(pid, active) {
+function setActivity(player_id, active) {
 	$.getJSON($SCRIPT_ROOT + '/_update_player_activity', {
-	pid: pid,
+	player_id: player_id,
 	active: active
 	}, function(data) {
 
@@ -82,17 +82,17 @@ $(document).ready(function() {
         <tbody>
         {% for entry in entries %}
         <tr>
-                <td><input type="text" name="nick-{{ entry['pid'] }}" value="{{ entry['nick'] }}" size="5" /></td>
+                <td><input type="text" name="nick-{{ entry['player_id'] }}" value="{{ entry['nick'] }}" size="5" /></td>
                 <td width=200><a href="#" data-reveal-id="editplayer" data-animation="fadeAndPop" data-animationspeed="300" data-closeonbackgroundclick="true" data-dismissmodalclass="close-reveal-modal" onclick="javascript:showPlayer({{ entry['player_id'] }});">{{ entry['name'] }}</a></td>
-                <td><input type="text" name="ifpa-{{ entry['pid'] }}" value="{{ entry['ifpanumber'] }}" size="10" /></td>
+                <td><input type="text" name="ifpa-{{ entry['player_id'] }}" value="{{ entry['ifpanumber'] }}" size="10" /></td>
                 <td>
-                <select name="ispaid-{{ entry['pid'] }}" onchange="javascript:setStatus(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
+                <select name="ispaid-{{ entry['player_id'] }}" onchange="javascript:setStatus(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
                         <option value="1"{% if entry['status'] == 1 %} selected{% endif %}>Paid</option>
                         <option value="0"{% if entry['status'] == 0 %} selected{% endif %}>Not Paid</option>
                 </select>
                 </td>
                 <td>
-                <select name="isactive-{{ entry['pid'] }}" onchange="javascript:setActivity(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
+                <select name="isactive-{{ entry['player_id'] }}" onchange="javascript:setActivity(this.name.substring(this.name.indexOf('-')+1,this.name.length), this.value);">
                         <option value="true"{% if entry['active'] == True %} selected{% endif %}>Yes</option>
                         <option value="false"{% if entry['active'] == False %} selected{% endif %}>No</option>
                 </select>

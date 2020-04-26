@@ -1,15 +1,12 @@
 DEBUG = False  # Turns on debugging features in flask
 
-DB_HOST = "silverball-postgres"
-DB_NAME = "silverball"  # The name of the database
+PLAYFIELD_API_HOST = "host.docker.internal"
+PLAYFIELD_API_PORT = "8080"  # The name of the database
 
 ########################################################################
 # SECRET CREDENTIALS
 # Copy these variables to instance/config.py and customize them
 ########################################################################
-
-DB_USER = "postgres"  # Database username
-DB_PASS = "change_me"  # Database password
 
 IFPA_API_KEY = "abc123yourkey"  # API Key for IFPA
 
