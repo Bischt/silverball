@@ -9,7 +9,7 @@ Flask-RESTful==0.3.8
 Flask-WTF==0.14.2
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 psycopg2==2.8.5
 python-openid==2.2.5
